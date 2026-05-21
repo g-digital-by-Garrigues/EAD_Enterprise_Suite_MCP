@@ -113,7 +113,7 @@ DRAFT → (activate) → ACTIVE → PARTIALLY_SIGNED → SIGNED → CLOSED
 
 ## Example
 
-"Have hugo.alonso@garrigues.com sign the collaboration agreement PDF."
+"Have hugo.alonso@empresa.com sign the collaboration agreement PDF."
 
 ```
 1. session_login()                          → userId

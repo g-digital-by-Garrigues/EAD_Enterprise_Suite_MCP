@@ -1,7 +1,7 @@
 {
   "name": "@g-digital/mcp-ead-enterprise-suite",
   "version": "0.0.1",
-  "description": "MCP server for EAD Enterprise Suite — Garrigues&#x27; advanced Digital Trust platform. Full signature workflows, certified evidence, notifications, dossiers, and large-file uploads for enterprise legal processes.",
+  "description": "MCP server for EAD Enterprise Suite, EAD Trust&#x27;s advanced Digital Trust platform. Full signature workflows, certified evidence, notifications, dossiers, and large-file uploads for enterprise legal processes.",
   "mcpName": "io.github.g-digital-by-Garrigues/ead-enterprise-suite",
   "license": "MIT",
   "type": "module",
