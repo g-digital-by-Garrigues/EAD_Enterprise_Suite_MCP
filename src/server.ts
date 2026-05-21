@@ -36,7 +36,7 @@ import { large_evidence_upload_complete } from "./tools/large_evidence_upload_co
 
 await createServer({
   name: "io.github.g-digital-by-Garrigues/ead-enterprise-suite",
-  version: "0.0.1",
+  version: "1.0.0",
   tools: [
     evidence_create,
 evidence_list,
