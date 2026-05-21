@@ -76,6 +76,12 @@ This server exposes 31 tools:
 - **`large_evidence_upload_initiate`** — Performs the large_evidence_upload_initiate operation against the GoCertius API.
 - **`large_evidence_upload_complete`** — Performs the large_evidence_upload_complete operation against the GoCertius API.
 
+## Coexistence
+
+This MCP server is the **current, actively maintained** interface for the EAD Enterprise Suite API.
+
+If you previously used an earlier MCP server for EAD Enterprise Suite (prior to v1.0), note that this server supersedes it. Both servers can run side-by-side during a migration window — they connect to the same upstream API and share no local state. To avoid duplicate tool names in multi-server MCP setups, run only one at a time once migration is complete.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).

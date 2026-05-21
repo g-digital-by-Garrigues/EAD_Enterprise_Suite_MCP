@@ -1,33 +1,129 @@
 # Signature Lifecycle (EAD Enterprise Suite)
 
-Manage the full digital signature workflow: create a signature request, add documents and participants, activate, and obtain the legal certificate.
+Manage the full digital signature workflow: create a signature request, upload documents to S3, add participants, wait for processing, set signature coordinates, activate, and retrieve the legal certificate.
 
-## Parameters
+## Key Concepts
 
-- `title` (required): Title of the signature request
-- `document_path` (required): Path to the PDF document to be signed
-- `signers` (required): List of signer email addresses
-- `case_file_id` (optional): UUID of the associated case file
-- `use_case_id` (optional): Use case template UUID for workflow configuration
+- **Signature types**: `INTERPOSITION` (basic) or `ADVANCED` (qualified). Advanced requires a real digital certificate from the signer.
+- **Close condition**: `ALL_REQUIRED` (everyone must sign) or `PARTIAL_ALLOWED` (first signer closes it).
+- **Sequence**: `PARALLEL` (all sign simultaneously) or `CONFIGURABLE` (ordered signing).
+- **WhatsApp notifications** (`sendWaUrl: true`): Only supported for `INTERPOSITION` type. Has no effect on `ADVANCED` signatures.
+- **Document states**: DRAFT → processing → `READY_TO_SIGN`. Must be `READY_TO_SIGN` before activation.
+- **Coordinates required**: Signature placement coordinates must be set on each signatory's document before the request can be activated.
+
+## IDs you need before starting
+
+- `caseFileId` — obtain via `case_file_list` (look at the `id` field, NOT the code like GN652)
+- `userId` — returned by `session_login` in the `userId` field (decoded from JWT; use `sub` claim)
 
 ## Flow
 
-1. **Create signature request** — call `signature_request_create` with title and metadata. This is a LONG-RUNNING operation — returns a task ID. The request starts in DRAFT status.
+### 1. Create the signature request
 
-2. **Add document** — call `signature_request_add_document` with the request ID to upload the PDF to be signed. The document is uploaded via a signed URL.
+```
+signature_request_create(
+  caseFileId: "<uuid>",
+  id: "<new-uuid>",          # generate a random UUID
+  name: "My Signature Request",
+  language: "es_ES",
+  deadline: "2026-05-30T23:59:59.000Z",   # must be within ~10 days
+  signatureType: "INTERPOSITION",          # or "ADVANCED"
+  closeCondition: "ALL_REQUIRED",          # or "PARTIAL_ALLOWED"
+  sequence: "PARALLEL",
+  dashboardUrl: "ANONYMIZED"
+)
+```
 
-3. **Add participants** — the signers are typically configured in the request. Use `signature_participant_list` to verify participant setup.
+Returns a signature request object with `id` and `status: DRAFT`.
 
-4. **Activate** — when all documents and participants are configured, the request transitions to ACTIVE status and notifications are sent to signers.
+### 2. Register document
 
-5. **Monitor progress** — use `signature_request_get` to track signing status (DRAFT → ACTIVE → PARTIALLY_SIGNED → SIGNED → CLOSED).
+```
+signature_request_add_document(
+  caseFileId: "<uuid>",
+  requestId: "<sig-request-uuid>",
+  id: "<new-uuid>",           # generate a random UUID
+  title: "Document Title",
+  fileName: "document.pdf",
+  fileSize: <bytes>,
+  hash: "<sha256-hex>",       # SHA-256 hex digest of the file
+)
+```
 
-6. **Cancel if needed** — use `signature_request_cancel` to cancel an active request before completion.
+Returns `{ url: "<presigned-s3-url>", ... }`. The URL is for upload only.
 
-7. **Get certificate** — when all parties have signed, call `signature_certificate_get` to retrieve the certified signature package (PDF + metadata + signatures).
+### 3. Upload document to S3
+
+Upload the raw file bytes to the presigned URL using HTTP PUT:
+```
+PUT <presigned-url>
+Content-Type: application/pdf
+x-amz-checksum-sha256: <base64-encoded SHA-256>  # Base64 of the same hash
+```
+
+### 4. Add participants (signatories)
+
+```
+signature_participant_create(
+  caseFileId: "<uuid>",
+  requestId: "<sig-request-uuid>",
+  id: "<new-uuid>",
+  role: "SIGNATORY",
+  email: "signer@example.com",
+  firstName: "First",
+  lastName: "Last",
+  phonePrefix: "+34",          # must include the + sign
+  phoneNumber: "600000000",
+  sendWaUrl: true              # WhatsApp link — ONLY works for INTERPOSITION type
+)
+```
+
+### 5. Poll until documents are READY_TO_SIGN
+
+Call `signature_document_list(caseFileId, requestId)` and wait until each document's `status` is `READY_TO_SIGN`. Typically takes ~30 seconds for files under 4 MB. Poll every 5–10 seconds.
+
+Do NOT activate before this step — the API will reject the request.
+
+### 6. Set signature coordinates per signatory
+
+Each signatory needs a signature position on each document. Use the HTTP API directly (no MCP tool for this):
+```
+PUT /case-files/{caseFileId}/signature-requests/{requestId}/documents/{documentId}/signatories/{signatoryId}/coordinates
+Body: { "coordinates": [{ "page": 1, "x": 30, "y": 230 }] }
+```
+
+The `signatoryId` is found in the `signature_document_list` response under each document's `signatories` array. Coordinates are in PDF points from the bottom-left corner.
+
+### 7. Activate
+
+Call `activate_signature_request(caseFileId, requestId)`. This transitions the request to `ACTIVE` and sends signing invitations to all participants.
+
+### 8. Monitor and retrieve certificate
+
+- `signature_request_get(caseFileId, requestId)` — check overall status
+- `signature_document_list(caseFileId, requestId)` — check per-document signing progress
+- `signature_certificate_get(caseFileId, requestId)` — retrieve the final legal certificate (only once status is CLOSED/SIGNED)
+
+## Status transitions
+
+```
+DRAFT → (activate) → ACTIVE → PARTIALLY_SIGNED → SIGNED → CLOSED
+                            ↘ (cancel) → CANCELLED
+```
 
 ## Example
 
-"Have alice@company.com and bob@company.com sign the employment_contract.pdf."
+"Have hugo.alonso@garrigues.com sign the collaboration agreement PDF."
 
-Tool sequence: `signature_request_create` → `signature_request_add_document` → `signature_request_get` → `signature_certificate_get`
+```
+1. session_login()                          → userId
+2. case_file_list(userId)                  → pick caseFileId
+3. signature_request_create(...)           → requestId
+4. signature_request_add_document(...)     → { url, documentId }
+5. PUT <url> with PDF bytes + checksum
+6. signature_participant_create(...)       → participantId
+7. [poll] signature_document_list(...)     → wait for READY_TO_SIGN
+8. [curl] PUT .../signatories/{id}/coordinates
+9. activate_signature_request(caseFileId, requestId)
+10. [later] signature_certificate_get(...)
+```
