@@ -1,0 +1,58 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "description": "MCP server for EAD Enterprise Suite, EAD Trust's advanced Digital Trust platform. Full signature workflows, certified evidence, notifications, dossiers, and large-file uploads for enterprise legal processes.",
+  "name": "io.github.g-digital-by-Garrigues/ead-enterprise-suite",
+  "packages": [
+    {
+      "environmentVariables": [
+        {
+          "description": "Flow 1: Email / password description: Your GoCertius account email address isSecret: false",
+          "isRequired": true,
+          "isSecret": false,
+          "name": "MCP_AUTH_EMAIL"
+        },
+        {
+          "description": "description: Your GoCertius account password isSecret: true (See https://www.eadtrust.eu/soluciones-legaltech/enterprise-suite/ for credential acquisition.)",
+          "isRequired": true,
+          "isSecret": true,
+          "name": "MCP_AUTH_PASSWORD"
+        },
+        {
+          "description": "description: OpenID Connect client ID isSecret: false",
+          "isRequired": true,
+          "isSecret": false,
+          "name": "MCP_OPENID_CLIENT_ID"
+        },
+        {
+          "description": "Flow 2: OpenID Connect (alternative to email/password) description: OpenID Connect issuer URL isSecret: false",
+          "isRequired": true,
+          "isSecret": false,
+          "name": "MCP_OPENID_ISSUER"
+        },
+        {
+          "description": "description: OpenID Connect refresh token isSecret: true (See https://www.eadtrust.eu/soluciones-legaltech/enterprise-suite/ for credential acquisition.)",
+          "isRequired": true,
+          "isSecret": true,
+          "name": "MCP_OPENID_REFRESH_TOKEN"
+        },
+        {
+          "description": "Transport (optional) description: HTTP port when running in hosted (HTTP) mode; ignored in stdio mode isSecret: false",
+          "isRequired": true,
+          "isSecret": false,
+          "name": "PORT"
+        }
+      ],
+      "identifier": "mcp-ead-enterprise-suite",
+      "registryType": "npm",
+      "transport": {
+        "type": "stdio"
+      },
+      "version": "1.0.0"
+    }
+  ],
+  "repository": {
+    "source": "github",
+    "url": "https://github.com/g-digital-by-Garrigues/EAD_Enterprise_Suite_MCP"
+  },
+  "version": "1.0.0"
+}
