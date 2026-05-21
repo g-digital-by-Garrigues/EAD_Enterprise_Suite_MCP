@@ -11,7 +11,7 @@
     "pino": "^10.0.0",
     "zod": "^4.0.0"
   },
-  "description": "MCP server for EAD Enterprise Suite, EAD Trust's advanced Digital Trust platform. Full signature workflows, certified evidence, notifications, dossiers, and large-file uploads for enterprise legal processes.",
+  "description": "EAD Enterprise Suite MCP — signature workflows, evidence, notifications, dossiers for enterprises.",
   "devDependencies": {
     "@types/node": "^22.0.0",
     "tsup": "^8.5.0",

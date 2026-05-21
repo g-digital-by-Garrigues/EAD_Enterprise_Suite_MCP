@@ -1,6 +1,6 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "description": "MCP server for EAD Enterprise Suite, EAD Trust's advanced Digital Trust platform. Full signature workflows, certified evidence, notifications, dossiers, and large-file uploads for enterprise legal processes.",
+  "description": "EAD Enterprise Suite MCP — signature workflows, evidence, notifications, dossiers for enterprises.",
   "name": "io.github.g-digital-by-Garrigues/ead-enterprise-suite",
   "packages": [
     {
