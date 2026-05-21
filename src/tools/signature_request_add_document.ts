@@ -14,7 +14,12 @@ const inputSchema = z.object({
 
 export const signature_request_add_document = defineTool({
   name: "signature_request_add_document",
-  description: "Performs the signature_request_add_document operation against the GoCertius API. Review the API documentation for full field details.",
+  description:
+    "Attach a document to a signature request and receive a pre-signed S3 upload URL. " +
+    "The 'hash' field must be the HEX-encoded SHA-256 of the file (not base64). " +
+    "After calling this tool, upload the file bytes to the returned URL using PUT with " +
+    "header 'x-amz-checksum-sha256: <base64-sha256>'. " +
+    "Use signature_request_full_create to handle document upload automatically in a single call.",
   inputSchema,
   annotations: {
     destructive: false,

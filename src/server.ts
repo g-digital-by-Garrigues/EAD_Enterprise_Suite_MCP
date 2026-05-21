@@ -29,8 +29,10 @@ import { signature_request_add_document } from "./tools/signature_request_add_do
 import { signature_document_list } from "./tools/signature_document_list.js";
 import { signature_participant_create } from "./tools/signature_participant_create.js";
 import { signature_participant_list } from "./tools/signature_participant_list.js";
+import { signature_coordinate_set } from "./tools/signature_coordinate_set.js";
 import { activate_signature_request } from "./tools/activate_signature_request.js";
 import { signature_certificate_get } from "./tools/signature_certificate_get.js";
+import { signature_request_full_create } from "./tools/signature_request_full_create.js";
 import { large_evidence_upload_initiate } from "./tools/large_evidence_upload_initiate.js";
 import { large_evidence_upload_complete } from "./tools/large_evidence_upload_complete.js";
 
@@ -65,8 +67,10 @@ signature_request_add_document,
 signature_document_list,
 signature_participant_create,
 signature_participant_list,
+signature_coordinate_set,
 activate_signature_request,
 signature_certificate_get,
+signature_request_full_create,
 large_evidence_upload_initiate,
 large_evidence_upload_complete,
   ],

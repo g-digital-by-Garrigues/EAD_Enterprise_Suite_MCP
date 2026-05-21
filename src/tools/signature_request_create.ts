@@ -14,7 +14,14 @@ const inputSchema = z.object({
 
 export const signature_request_create = defineTool({
   name: "signature_request_create",
-  description: "Performs the signature_request_create operation against the GoCertius API. Review the API documentation for full field details.",
+  description:
+    "Create a new signature request (envelope). Returns immediately once the request is registered; " +
+    "the task completes via SSE when all signatories have signed. " +
+    "After creating, you must: (1) add documents via signature_request_add_document, " +
+    "(2) add signatories via signature_participant_create, " +
+    "(3) set signature box positions via signature_coordinate_set (INTERPOSITION type), " +
+    "(4) activate via activate_signature_request. " +
+    "To handle the entire flow in a single call, use signature_request_full_create instead.",
   inputSchema,
   annotations: {
     destructive: false,

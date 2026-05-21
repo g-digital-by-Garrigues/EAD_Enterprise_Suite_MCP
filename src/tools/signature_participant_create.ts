@@ -14,7 +14,11 @@ const inputSchema = z.object({
 
 export const signature_participant_create = defineTool({
   name: "signature_participant_create",
-  description: "Performs the signature_participant_create operation against the GoCertius API. Review the API documentation for full field details.",
+  description:
+    "Add a signatory, observer, or validator to a signature request. " +
+    "phonePrefix must include the '+' sign (e.g. '+34'). " +
+    "For INTERPOSITION signature types, call signature_coordinate_set after this to define the signature box position. " +
+    "Use signature_request_full_create to handle participants and coordinates in a single call.",
   inputSchema,
   annotations: {
     destructive: false,
