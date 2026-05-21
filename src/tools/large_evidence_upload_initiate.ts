@@ -28,7 +28,10 @@ export const large_evidence_upload_initiate = defineTool({
     const sdkClient = createClient(
       createConfig({
         baseUrl: process.env.MCP_API_BASE_URL ?? "",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          ...(ctx.correlationId ? { "X-Correlation-Id": ctx.correlationId } : {}),
+        },
       }),
     );
 
