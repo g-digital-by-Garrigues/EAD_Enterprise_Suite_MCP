@@ -81,7 +81,9 @@ export const signature_request_full_create = defineTool({
   sseOnly: true,
   idempotencyWindowSeconds: 86400,
 
-  async execute(input, ctx) {
+  async execute(rawInput, ctx) {
+    // biome-ignore lint/suspicious/noExplicitAny: input is validated by inputSchema above
+    const input = rawInput as z.infer<typeof inputSchema>;
     const token = ctx.auth?.token ?? "";
     const sdkClient = createClient(
       createConfig({
@@ -196,9 +198,9 @@ export const signature_request_full_create = defineTool({
       // biome-ignore lint/suspicious/noExplicitAny: SDK call
       const coordFn = updateSignatureCoordinatesControllerRun as (opts: any) => Promise<any>;
 
-      for (let i = 0; i < input.signatories.length; i++) {
-        const signatory = input.signatories[i];
-        const signatoryId = signatoryIds[i];
+      for (let i = 0; i < signatoryIds.length; i++) {
+        const signatory = input.signatories[i]!;
+        const signatoryId = signatoryIds[i]!;
 
         const coordResp = await coordFn({
           client: sdkClient,
