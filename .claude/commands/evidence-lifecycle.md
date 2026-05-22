@@ -1,32 +1,134 @@
 # Evidence Lifecycle (EAD Enterprise Suite)
 
-Create and manage certified evidence chains in EAD Enterprise Suite, including large file uploads.
+Create and manage certified evidence chains, including large file uploads.
 
-## Parameters
+## Key concepts
 
-- `case_file_id` (required): UUID of the case file
-- `evidence_group_name` (optional): Name for the evidence group
-- `title` (required): Title of the evidence item
-- `file_size` (optional): File size in bytes (required for large file uploads > 10 MB)
+- **Evidence group**: A container that groups related evidence items. Must exist before adding evidence.
+- **evidenceType**: `FILE` (documents), `PHOTO`, `VIDEO`, or `WEB_PLUGIN`.
+- **custodyType**: `INTERNAL` (EAD stores the file) or `EXTERNAL` (you store the file, EAD certifies the hash).
+- **Sealing**: Certifies the entire group — timestamped and legally binding. Long-running (MCP task stays open until complete).
+- **Large files**: Files ≥ 10 MB require the multipart upload flow via `large_evidence_upload_initiate`.
 
-## Flow
+## IDs you need before starting
 
-### Standard evidence (< 10 MB)
+- `caseFileId` — from `case_file_list`
 
-1. **Create evidence group** — call `evidence_group_create` with the case file ID.
-2. **Create evidence** — call `evidence_create` with file metadata. Upload via the returned `uploadFileUrl`.
-3. **Seal the group** — call `evidence_seal` (long-running) to certify.
+---
 
-### Large evidence (≥ 10 MB)
+## Standard flow (< 10 MB)
 
-1. **Create evidence group** — call `evidence_group_create`.
-2. **Initiate large upload** — call `large_evidence_upload_initiate` to get a multi-part upload URL.
-3. **Upload in parts** — upload the file in chunks to the provided presigned URLs.
-4. **Complete upload** — call `large_evidence_upload_complete` to finalize the upload and register the evidence.
-5. **Seal the group** — call `evidence_seal`.
+### Step 1 — Create evidence group
 
-## Example
+```
+evidence_group_create(
+  id: "<new-uuid>",
+  caseFileId: "<uuid>",
+  evidenceType: "FILE",            # FILE | PHOTO | VIDEO | WEB_PLUGIN
+  name: "Group name (max 64 chars)",
+  description: "Optional description (max 160 chars)"
+)
+```
 
-"Upload a 50 MB contract archive as certified evidence for case file abc-123."
+### Step 2 — Create evidence item
 
-Tool sequence: `evidence_group_create` → `large_evidence_upload_initiate` → [upload] → `large_evidence_upload_complete` → `evidence_seal`
+```
+evidence_create(
+  id: "<new-uuid>",
+  caseFileId: "<uuid>",
+  evidenceGroupId: "<group-uuid>",
+  title: "Evidence title (max 128 chars)",
+  fileName: "document.pdf",
+  hash: "<sha256-hex>",           # SHA-256 hex digest of the file
+  custodyType: "INTERNAL"         # INTERNAL | EXTERNAL
+)
+```
+
+Returns `{ uploadFileUrl: "<presigned-s3-url>", ... }`.
+
+### Step 3 — Upload the file
+
+```
+PUT <uploadFileUrl>
+Content-Type: application/octet-stream
+Body: <raw file bytes>
+```
+
+Upload the raw file bytes to the presigned S3 URL via HTTP PUT. No auth headers needed — the URL already contains the credentials.
+
+> Skip this step for `custodyType: "EXTERNAL"` — EAD only records the hash, you keep the file.
+
+### Step 4 — Seal the group
+
+```
+evidence_seal(
+  id: "<group-uuid>",
+  caseFileId: "<uuid>",
+  evidencesCount: <number-of-evidence-items>
+)
+```
+
+Long-running — the MCP task stays open (working) until the group is sealed and certified. `evidencesCount` must match the number of evidence items added.
+
+### Step 5 — Read / verify
+
+```
+evidence_list(caseFileId, evidenceGroupId)   # list all items in the group
+evidence_get(caseFileId, evidenceId)          # get details of a single item
+evidence_group_list(caseFileId)              # list all groups in the case file
+```
+
+---
+
+## Large file flow (≥ 10 MB)
+
+### Step 1 — Create evidence group (same as above)
+
+### Step 2 — Initiate multipart upload
+
+```
+large_evidence_upload_initiate(
+  id: "<new-uuid>",
+  caseFileId: "<uuid>",
+  evidenceGroupId: "<group-uuid>",
+  title: "Large file evidence",
+  fileName: "archive.zip",
+  hash: "<sha256-hex>",
+  fileSize: <bytes>,              # required — total file size in bytes
+  custodyType: "INTERNAL"
+)
+```
+
+Returns a list of presigned URLs for each chunk.
+
+### Step 3 — Upload chunks
+
+Upload each chunk to its corresponding presigned URL via HTTP PUT. Chunk size is specified by the API response.
+
+### Step 4 — Complete the upload
+
+```
+large_evidence_upload_complete(
+  id: "<upload-id>",
+  caseFileId: "<uuid>",
+  evidenceGroupId: "<group-uuid>"
+)
+```
+
+### Step 5 — Seal the group (same as standard flow)
+
+---
+
+## Example — standard flow
+
+"Register a signed PDF contract as certified evidence."
+
+```
+1. case_file_list(userId)                    → caseFileId
+2. evidence_group_create(...)                → groupId
+3. evidence_create(..., hash: sha256(file))  → { uploadFileUrl, id: evidenceId }
+4. PUT <uploadFileUrl> with file bytes
+5. evidence_seal(id: groupId, evidencesCount: 1)
+   ← task completes when sealed
+6. evidence_list(caseFileId, groupId)        → verify status: COMPLETED
+```
