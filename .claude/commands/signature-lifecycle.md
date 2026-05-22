@@ -1,67 +1,100 @@
 # Signature Lifecycle (EAD Enterprise Suite)
 
-Manage the full digital signature workflow: create a signature request, upload documents to S3, add participants, wait for processing, set signature coordinates, activate, and retrieve the legal certificate.
+Manage the full digital signature workflow via EAD Enterprise Suite.
 
-## Key Concepts
+## Quick path (recommended)
 
-- **Signature types**: `INTERPOSITION` (basic) or `ADVANCED` (qualified). Advanced requires a real digital certificate from the signer.
+Use `signature_request_full_create` to handle the **entire flow in a single call** — it downloads the document, computes the SHA-256, uploads to S3, adds participants, sets coordinates, and activates. The task stays open until all signatories sign or reject.
+
+```
+signature_request_full_create(
+  caseFileId: "<uuid>",           # from case_file_list
+  name: "My Signature Request",
+  language: "es_ES",
+  signatureType: "INTERPOSITION", # or "BIOMETRIC"
+  deadline: "2026-06-30T23:59:59.000Z",
+  documentUrl: "https://example.com/contract.pdf",
+  documentTitle: "Collaboration Agreement",
+  signatories: [
+    {
+      firstName: "Ana",
+      lastName: "García",
+      email: "ana@empresa.com",
+      phonePrefix: "+34",         # must include the + sign
+      phoneNumber: "600000000",
+      signaturePage: 1,
+      signatureX: 30,
+      signatureY: 230
+    }
+  ]
+)
+```
+
+Returns when all participants have signed or when one rejects.
+
+---
+
+## Step-by-step path (advanced / fine-grained control)
+
+Use the individual tools when you need custom control over each step.
+
+### Key concepts
+
+- **Signature types**: `INTERPOSITION` (electronic, placement box) or `BIOMETRIC` (handwritten biometric, no coordinates needed).
 - **Close condition**: `ALL_REQUIRED` (everyone must sign) or `PARTIAL_ALLOWED` (first signer closes it).
 - **Sequence**: `PARALLEL` (all sign simultaneously) or `CONFIGURABLE` (ordered signing).
-- **WhatsApp notifications** (`sendWaUrl: true`): Only supported for `INTERPOSITION` type. Has no effect on `ADVANCED` signatures.
+- **WhatsApp** (`sendWaUrl: true`): Only supported for `INTERPOSITION` type.
 - **Document states**: DRAFT → processing → `READY_TO_SIGN`. Must be `READY_TO_SIGN` before activation.
-- **Coordinates required**: Signature placement coordinates must be set on each signatory's document before the request can be activated.
+- **Coordinates**: Required for `INTERPOSITION` only. Set before activation via `signature_coordinate_set`.
 
-## IDs you need before starting
+### IDs you need before starting
 
-- `caseFileId` — obtain via `case_file_list` (look at the `id` field, NOT the code like GN652)
-- `userId` — returned by `session_login` in the `userId` field (decoded from JWT; use `sub` claim)
+- `caseFileId` — from `case_file_list` (use the `id` UUID, not the code like PR82)
+- `userId` — returned by `session_login` in the `userId` field
 
-## Flow
-
-### 1. Create the signature request
+### Step 1 — Create the signature request
 
 ```
 signature_request_create(
   caseFileId: "<uuid>",
-  id: "<new-uuid>",          # generate a random UUID
+  id: "<new-uuid>",
   name: "My Signature Request",
   language: "es_ES",
-  deadline: "2026-05-30T23:59:59.000Z",   # must be within ~10 days
-  signatureType: "INTERPOSITION",          # or "ADVANCED"
-  closeCondition: "ALL_REQUIRED",          # or "PARTIAL_ALLOWED"
-  sequence: "PARALLEL",
-  dashboardUrl: "ANONYMIZED"
+  deadline: "2026-06-30T23:59:59.000Z",
+  signatureType: "INTERPOSITION",
+  closeCondition: "ALL_REQUIRED",
+  sequence: "PARALLEL"
 )
 ```
 
-Returns a signature request object with `id` and `status: DRAFT`.
+Returns `{ id, status: "DRAFT" }`.
 
-### 2. Register document
+### Step 2 — Register document
 
 ```
 signature_request_add_document(
   caseFileId: "<uuid>",
   requestId: "<sig-request-uuid>",
-  id: "<new-uuid>",           # generate a random UUID
+  id: "<new-uuid>",
   title: "Document Title",
   fileName: "document.pdf",
   fileSize: <bytes>,
-  hash: "<sha256-hex>",       # SHA-256 hex digest of the file
+  hash: "<sha256-hex>"       # SHA-256 hex digest of the file
 )
 ```
 
-Returns `{ url: "<presigned-s3-url>", ... }`. The URL is for upload only.
+Returns `{ url: "<presigned-s3-url>", id: "<documentId>" }`.
 
-### 3. Upload document to S3
+### Step 3 — Upload document to S3
 
-Upload the raw file bytes to the presigned URL using HTTP PUT:
 ```
 PUT <presigned-url>
-Content-Type: application/pdf
-x-amz-checksum-sha256: <base64-encoded SHA-256>  # Base64 of the same hash
+Content-Type: application/octet-stream
+x-amz-checksum-sha256: <base64-encoded SHA-256>   # base64 of the same hash
+Body: <raw file bytes>
 ```
 
-### 4. Add participants (signatories)
+### Step 4 — Add participants
 
 ```
 signature_participant_create(
@@ -69,61 +102,78 @@ signature_participant_create(
   requestId: "<sig-request-uuid>",
   id: "<new-uuid>",
   role: "SIGNATORY",
-  email: "signer@example.com",
-  firstName: "First",
-  lastName: "Last",
-  phonePrefix: "+34",          # must include the + sign
+  firstName: "Ana",
+  lastName: "García",
+  email: "ana@empresa.com",
+  phonePrefix: "+34",         # must include the + sign
   phoneNumber: "600000000",
-  sendWaUrl: true              # WhatsApp link — ONLY works for INTERPOSITION type
+  linkToAllDocuments: true
 )
 ```
 
-### 5. Poll until documents are READY_TO_SIGN
+### Step 5 — Poll until READY_TO_SIGN
 
-Call `signature_document_list(caseFileId, requestId)` and wait until each document's `status` is `READY_TO_SIGN`. Typically takes ~30 seconds for files under 4 MB. Poll every 5–10 seconds.
+Call `signature_document_list(caseFileId, requestId)` every 5–10 seconds until all documents show `status: "READY_TO_SIGN"`. Typically 15–60 seconds for files under 4 MB.
 
-Do NOT activate before this step — the API will reject the request.
+**Do not activate before this step — the API will reject it.**
 
-### 6. Set signature coordinates per signatory
+### Step 6 — Set signature coordinates (INTERPOSITION only)
 
-Each signatory needs a signature position on each document. Use the HTTP API directly (no MCP tool for this):
 ```
-PUT /case-files/{caseFileId}/signature-requests/{requestId}/documents/{documentId}/signatories/{signatoryId}/coordinates
-Body: { "coordinates": [{ "page": 1, "x": 30, "y": 230 }] }
+signature_coordinate_set(
+  caseFileId: "<uuid>",
+  requestId: "<sig-request-uuid>",
+  documentId: "<doc-uuid>",
+  signatoryId: "<participant-uuid>",
+  coordinates: [{ page: 1, x: 30, y: 230 }]
+)
 ```
 
-The `signatoryId` is found in the `signature_document_list` response under each document's `signatories` array. Coordinates are in PDF points from the bottom-left corner.
+Coordinates are PDF points from the bottom-left corner. Call once per signatory per document. Skip this step for `BIOMETRIC` type.
 
-### 7. Activate
+### Step 7 — Activate
 
-Call `activate_signature_request(caseFileId, requestId)`. This transitions the request to `ACTIVE` and sends signing invitations to all participants.
+```
+activate_signature_request(caseFileId, requestId)
+```
 
-### 8. Monitor and retrieve certificate
+Transitions to `ACTIVE` and sends signing invitations to all participants.
 
-- `signature_request_get(caseFileId, requestId)` — check overall status
-- `signature_document_list(caseFileId, requestId)` — check per-document signing progress
-- `signature_certificate_get(caseFileId, requestId)` — retrieve the final legal certificate (only once status is CLOSED/SIGNED)
+### Step 8 — Monitor and retrieve certificate
+
+- `signature_request_get(caseFileId, requestId)` — overall status
+- `signature_document_list(caseFileId, requestId)` — per-document signing progress
+- `signature_certificate_get(caseFileId, requestId)` — final legal certificate (only once `SIGNED` or `CLOSED`)
+
+---
+
+## Cancel a request
+
+Active requests can be cancelled before all signatories have signed:
+
+```
+signature_request_cancel(caseFileId, requestId)
+```
 
 ## Status transitions
 
 ```
 DRAFT → (activate) → ACTIVE → PARTIALLY_SIGNED → SIGNED → CLOSED
                             ↘ (cancel) → CANCELLED
+                            ↘ (all reject) → REJECTED
 ```
 
-## Example
-
-"Have hugo.alonso@empresa.com sign the collaboration agreement PDF."
+## Example — full step-by-step sequence
 
 ```
-1. session_login()                          → userId
-2. case_file_list(userId)                  → pick caseFileId
-3. signature_request_create(...)           → requestId
-4. signature_request_add_document(...)     → { url, documentId }
-5. PUT <url> with PDF bytes + checksum
-6. signature_participant_create(...)       → participantId
-7. [poll] signature_document_list(...)     → wait for READY_TO_SIGN
-8. [curl] PUT .../signatories/{id}/coordinates
+1. session_login()                                    → userId
+2. case_file_list(userId)                             → caseFileId
+3. signature_request_create(...)                      → requestId
+4. signature_request_add_document(...)                → { url, documentId }
+5. PUT <url> with PDF bytes + checksum header
+6. signature_participant_create(...)                  → participantId
+7. [poll] signature_document_list(...)                → wait for READY_TO_SIGN
+8. signature_coordinate_set(..., documentId, participantId)
 9. activate_signature_request(caseFileId, requestId)
-10. [later] signature_certificate_get(...)
+10. [later] signature_certificate_get(...)            → legal certificate
 ```
