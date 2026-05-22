@@ -14,6 +14,7 @@ import {
   createSignatureParticipantControllerRun,
   updateSignatureCoordinatesControllerRun,
   activateSignatureRequestControllerRun,
+  listSignatureDocumentsControllerRun,
 } from "../api/sdk.gen.js";
 
 const zSignatory = z.object({
@@ -221,7 +222,47 @@ export const signature_request_full_create = defineTool({
       }
     }
 
-    // ── 7. Activate ────────────────────────────────────────────────────────
+    // ── 7. Wait for document to reach READY_TO_SIGN ────────────────────────
+    // EAD processes uploaded documents asynchronously; activation fails if called
+    // before all documents are ready. Poll up to 120s in 3s intervals.
+    // biome-ignore lint/suspicious/noExplicitAny: SDK call
+    const listDocsFn = listSignatureDocumentsControllerRun as (opts: any) => Promise<any>;
+    const deadlineTs = Date.now() + 120_000;
+    let pollIteration = 0;
+    while (Date.now() < deadlineTs) {
+      const docsResp = await listDocsFn({
+        client: sdkClient,
+        path: { caseFileId: input.caseFileId, requestId },
+      });
+      if (docsResp.error === undefined) {
+        const docs: { status: string }[] = (docsResp.data as { data?: { status: string }[] })?.data ?? [];
+        const statuses = docs.map((d) => d.status);
+        console.error(
+          JSON.stringify({
+            level: 20,
+            msg: "READY_TO_SIGN poll",
+            requestId,
+            iteration: ++pollIteration,
+            docCount: docs.length,
+            statuses,
+          }),
+        );
+        if (docs.length > 0 && docs.every((d) => d.status === "READY_TO_SIGN")) break;
+      } else {
+        console.error(
+          JSON.stringify({
+            level: 30,
+            msg: "READY_TO_SIGN poll: list API error",
+            requestId,
+            iteration: ++pollIteration,
+            error: docsResp.error,
+          }),
+        );
+      }
+      await new Promise((r) => setTimeout(r, 3000));
+    }
+
+    // ── 8. Activate ────────────────────────────────────────────────────────
     // biome-ignore lint/suspicious/noExplicitAny: SDK call
     const activateFn = activateSignatureRequestControllerRun as (opts: any) => Promise<any>;
     const activateResp = await activateFn({
