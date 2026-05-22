@@ -42,7 +42,7 @@
           "name": "PORT"
         }
       ],
-      "identifier": "mcp-ead-enterprise-suite",
+      "identifier": "@g-digital/mcp-ead-enterprise-suite",
       "registryType": "npm",
       "transport": {
         "type": "stdio"
