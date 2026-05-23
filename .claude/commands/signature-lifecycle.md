@@ -11,7 +11,7 @@ signature_request_full_create(
   caseFileId: "<uuid>",           # from case_file_list
   name: "My Signature Request",
   language: "es_ES",
-  signatureType: "INTERPOSITION", # or "BIOMETRIC"
+  signatureType: "INTERPOSITION", # or "ADVANCED"
   deadline: "2026-06-30T23:59:59.000Z",
   documentUrl: "https://example.com/contract.pdf",
   documentTitle: "Collaboration Agreement",
@@ -40,7 +40,7 @@ Use the individual tools when you need custom control over each step.
 
 ### Key concepts
 
-- **Signature types**: `INTERPOSITION` (electronic, placement box) or `BIOMETRIC` (handwritten biometric, no coordinates needed).
+- **Signature types**: `INTERPOSITION` (electronic, placement box) or `ADVANCED` (qualified, requires a digital certificate from the signer).
 - **Close condition**: `ALL_REQUIRED` (everyone must sign) or `PARTIAL_ALLOWED` (first signer closes it).
 - **Sequence**: `PARALLEL` (all sign simultaneously) or `CONFIGURABLE` (ordered signing).
 - **WhatsApp** (`sendWaUrl: true`): Only supported for `INTERPOSITION` type.
@@ -129,7 +129,7 @@ signature_coordinate_set(
 )
 ```
 
-Coordinates are PDF points from the bottom-left corner. Call once per signatory per document. Skip this step for `BIOMETRIC` type.
+Coordinates are PDF points from the bottom-left corner. Call once per signatory per document. Skip this step for `ADVANCED` type.
 
 ### Step 7 — Activate
 
