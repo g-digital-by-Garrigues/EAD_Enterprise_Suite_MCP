@@ -73,9 +73,9 @@ Long-running — the MCP task stays open (working) until the group is sealed and
 ### Step 5 — Read / verify
 
 ```
-evidence_list(caseFileId, evidenceGroupId)   # list all items in the group
-evidence_get(caseFileId, evidenceId)          # get details of a single item
-evidence_group_list(caseFileId)              # list all groups in the case file
+evidence_list(caseFileId, evidenceGroupId)              # list all items in the group
+evidence_get(caseFileId, evidenceGroupId, id)           # get details of a single item (all 3 required)
+evidence_group_list(caseFileId)                         # list all groups in the case file
 ```
 
 ---
