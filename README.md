@@ -296,9 +296,11 @@ For credential setup instructions, visit: [https://www.eadtrust.eu/soluciones-le
 
 This package ships Claude Code slash-commands under `.claude/commands/`. After install, invoke them from Claude Code:
 
-- `/signature-lifecycle` — step-by-step workflow guide
-- `/notification-lifecycle` — step-by-step workflow guide
-- `/evidence-lifecycle` — step-by-step workflow guide
+- `/getting-started` — authentication, finding your case file, generating valid UUIDs
+- `/signature-lifecycle` — full signature workflow (quick path + step-by-step)
+- `/evidence-lifecycle` — certified evidence creation and sealing
+- `/notification-lifecycle` — certified notification delivery
+- `/dossier-lifecycle` — template-driven certified dossier creation
 
 See [docs/agent-prompts.md](docs/agent-prompts.md) for end-to-end prompt examples and the tool sequences they trigger.
 
@@ -308,37 +310,37 @@ This server exposes **31 tools**:
 
 | Tool | Description |
 |------|-------------|
-| `evidence_create` | Performs the evidence_create operation against the GoCertius API. |
-| `evidence_list` | Performs the evidence_list operation against the GoCertius API. |
-| `evidence_seal` | Performs the evidence_seal operation against the GoCertius API. |
-| `evidence_get` | Performs the evidence_get operation against the GoCertius API. |
-| `evidence_group_create` | Performs the evidence_group_create operation against the GoCertius API. |
-| `evidence_group_list` | Performs the evidence_group_list operation against the GoCertius API. |
-| `dossier_create` | Performs the dossier_create operation against the GoCertius API. |
-| `dossier_list` | Performs the dossier_list operation against the GoCertius API. |
-| `dossier_get` | Performs the dossier_get operation against the GoCertius API. |
-| `dossier_template_list` | Performs the dossier_template_list operation against the GoCertius API. |
-| `notification_request_create` | Performs the notification_request_create operation against the GoCertius API. |
-| `notification_request_send` | Performs the notification_request_send operation against the GoCertius API. |
-| `notification_request_status` | Performs the notification_request_status operation against the GoCertius API. |
-| `notification_receiver_add` | Performs the notification_receiver_add operation against the GoCertius API. |
-| `notification_certificate_get` | Performs the notification_certificate_get operation against the GoCertius API. |
-| `case_file_list` | Performs the case_file_list operation against the GoCertius API. |
-| `case_file_get` | Performs the case_file_get operation against the GoCertius API. |
-| `session_login` | Performs the session_login operation against the GoCertius API. |
-| `session_info` | Performs the session_info operation against the GoCertius API. |
-| `use_case_list` | Performs the use_case_list operation against the GoCertius API. |
-| `signature_request_create` | Performs the signature_request_create operation against the GoCertius API. |
-| `signature_request_get` | Performs the signature_request_get operation against the GoCertius API. |
-| `signature_request_cancel` | Performs the signature_request_cancel operation against the GoCertius API. |
-| `signature_request_add_document` | Performs the signature_request_add_document operation against the GoCertius API. |
-| `signature_document_list` | Performs the signature_document_list operation against the GoCertius API. |
-| `signature_participant_create` | Performs the signature_participant_create operation against the GoCertius API. |
-| `signature_participant_list` | Performs the signature_participant_list operation against the GoCertius API. |
-| `activate_signature_request` | Performs the activate_signature_request operation against the GoCertius API. |
-| `signature_certificate_get` | Performs the signature_certificate_get operation against the GoCertius API. |
-| `large_evidence_upload_initiate` | Performs the large_evidence_upload_initiate operation against the GoCertius API. |
-| `large_evidence_upload_complete` | Performs the large_evidence_upload_complete operation against the GoCertius API. |
+| `evidence_create` | Add a file to an open evidence group. Returns a presigned S3 upload URL for INTERNAL custody; records only the hash for EXTERNAL. |
+| `evidence_list` | List all evidence items in an evidence group, filterable by status, date range, and type. |
+| `evidence_seal` | Seal and certify an evidence group (long-running MCP task). Closes the group and timestamps all contained evidence. |
+| `evidence_get` | Get full details of a single evidence item including status, hash, and custody type. |
+| `evidence_group_create` | Create a new open evidence group. Type can be FILE, PHOTO, VIDEO, or WEB_PLUGIN. |
+| `evidence_group_list` | List all evidence groups in a case file with their current status and evidence counts. |
+| `dossier_create` | Create a certified dossier from a template. EAD certifies it automatically after creation. |
+| `dossier_list` | List dossiers in a case file, filterable by status (DRAFT, CERTIFYING, CERTIFIED). |
+| `dossier_get` | Get a dossier's details including the certified PDF download URL once CERTIFIED. |
+| `dossier_template_list` | List available dossier templates. Use the returned `id` when calling `dossier_create`. |
+| `notification_request_create` | Create a certified notification request in DRAFT status. Add recipients then call `notification_request_send`. |
+| `notification_request_send` | Trigger delivery of a certified notification to all recipients (long-running MCP task — waits for DELIVERED). |
+| `notification_request_status` | Get the current status and receiver statistics of a notification request. |
+| `notification_receiver_add` | Add a recipient to a DRAFT notification request. Supports optional SMS OTP per recipient. |
+| `notification_certificate_get` | Generate or retrieve the legal delivery certificate for a specific notification receiver. |
+| `case_file_list` | List case files accessible to a user. Requires the `userId` returned by `session_login`. |
+| `case_file_get` | Get details of a specific case file by its UUID. |
+| `session_login` | Authenticate with EAD Enterprise Suite. Supports email/password and OpenID Connect (Azure AD device flow). |
+| `session_info` | Look up the authentication type (Password or OpenID) configured for an email address. |
+| `use_case_list` | List available use cases (workflow templates) in a company. |
+| `signature_request_create` | Create a signature request envelope in DRAFT status. For the full automated flow use `signature_request_full_create`. |
+| `signature_request_get` | Get the current status and details of a signature request. |
+| `signature_request_cancel` | Cancel a signature request in DRAFT or ACTIVE status. |
+| `signature_request_add_document` | Attach a PDF to a signature request and receive a presigned S3 upload URL. Hash must be SHA-256 hex. |
+| `signature_document_list` | List documents in a signature request and check their processing status (poll for READY_TO_SIGN before activating). |
+| `signature_participant_create` | Add a signatory, observer, or validator to a signature request. |
+| `signature_participant_list` | List all participants linked to a signature request. |
+| `activate_signature_request` | Activate a signature request, sending signing invitations to all participants. Documents must be READY_TO_SIGN first. |
+| `signature_certificate_get` | Retrieve the legal signature certificate once the request reaches SIGNED or CLOSED status. |
+| `large_evidence_upload_initiate` | Start a multipart upload for evidence files ≥ 10 MB. Returns presigned URLs for each chunk. |
+| `large_evidence_upload_complete` | Finalize a multipart evidence upload and register the evidence in the group. |
 
 ## Coexistence
 
