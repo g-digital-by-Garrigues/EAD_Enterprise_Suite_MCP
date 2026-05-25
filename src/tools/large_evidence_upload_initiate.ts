@@ -21,8 +21,7 @@ export const large_evidence_upload_initiate = defineTool({
     idempotent: false,
     requiresUserConfirmation: false,
   },
-  pollable: true,
-  idempotencyWindowSeconds: 86400,
+  pollable: false,
   async execute(input, ctx) {
     const token = ctx.auth?.token ?? "";
     const sdkClient = createClient(
