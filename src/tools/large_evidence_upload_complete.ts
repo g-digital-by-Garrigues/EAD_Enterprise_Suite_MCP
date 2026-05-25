@@ -14,15 +14,14 @@ const inputSchema = z.object({
 
 export const large_evidence_upload_complete = defineTool({
   name: "large_evidence_upload_complete",
-  description: "Performs the large_evidence_upload_complete operation against the GoCertius API. Review the API documentation for full field details.",
+  description: "Finalize a multipart evidence upload and register the evidence in the group. Returns immediately — the evidence transitions asynchronously to COMPLETED. Poll evidence_list until status is COMPLETED before sealing the group.",
   inputSchema,
   annotations: {
     destructive: false,
     idempotent: false,
     requiresUserConfirmation: false,
   },
-  pollable: true,
-  sseOnly: true,
+  pollable: false,
   idempotencyWindowSeconds: 86400,
   async execute(input, ctx) {
     const token = ctx.auth?.token ?? "";
