@@ -14,15 +14,14 @@ const inputSchema = z.object({
 
 export const evidence_seal = defineTool({
   name: "evidence_seal",
-  description: "Performs the evidence_seal operation against the GoCertius API. Review the API documentation for full field details.",
+  description: "Seal and certify an evidence group. Closes the group to new additions and triggers async timestamping. Returns immediately — the group transitions OPEN → CLOSING → CLOSED. Poll evidence_group_list until status is CLOSED before linking to a dossier.",
   inputSchema,
   annotations: {
     destructive: false,
     idempotent: false,
     requiresUserConfirmation: false,
   },
-  pollable: true,
-  sseOnly: true,
+  pollable: false,
   idempotencyWindowSeconds: 86400,
   async execute(input, ctx) {
     const token = ctx.auth?.token ?? "";
