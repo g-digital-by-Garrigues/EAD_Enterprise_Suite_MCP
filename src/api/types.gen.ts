@@ -618,6 +618,342 @@ export type UpdateDossierControllerRunResponses = {
 
 export type UpdateDossierControllerRunResponse = UpdateDossierControllerRunResponses[keyof UpdateDossierControllerRunResponses];
 
+export type DeleteDossierEvidenceControllerRunData = {
+    body?: never;
+    path: {
+        dossierEvidenceGroupId: string;
+        dossierId: string;
+        caseFileId: string;
+        dossierEvidenceId: string;
+    };
+    query?: never;
+    url: '/case-files/{caseFileId}/dossiers/{dossierId}/evidence-groups/{dossierEvidenceGroupId}/evidences/{dossierEvidenceId}';
+};
+
+export type DeleteDossierEvidenceControllerRunResponses = {
+    204: void;
+};
+
+export type DeleteDossierEvidenceControllerRunResponse = DeleteDossierEvidenceControllerRunResponses[keyof DeleteDossierEvidenceControllerRunResponses];
+
+export type ShowDossierEvidenceControllerRunData = {
+    body?: never;
+    path: {
+        dossierEvidenceGroupId: string;
+        dossierId: string;
+        caseFileId: string;
+        dossierEvidenceId: string;
+    };
+    query?: never;
+    url: '/case-files/{caseFileId}/dossiers/{dossierId}/evidence-groups/{dossierEvidenceGroupId}/evidences/{dossierEvidenceId}';
+};
+
+export type ShowDossierEvidenceControllerRunResponses = {
+    200: {
+        id: string;
+        title: string;
+        fileSize?: number;
+        fileName?: string;
+        type: string;
+        capturedAt: string;
+        dossierEvidenceGroupId: string;
+        evidenceId: string;
+        evidenceGroupId: string;
+        hash: string;
+        tspTimestamp?: {
+            provider: string;
+            token: string;
+            date: string;
+        };
+        tspTimestamps: Array<{
+            provider: string;
+            token: string;
+            date: string;
+        }>;
+        dltTimestamp?: {
+            provider: string;
+            blockExplorerLink: string;
+            date: string;
+        };
+        dltTimestamps: Array<{
+            provider: string;
+            blockExplorerLink: string;
+            date: string;
+        }>;
+        custodyType: string;
+    };
+};
+
+export type ShowDossierEvidenceControllerRunResponse = ShowDossierEvidenceControllerRunResponses[keyof ShowDossierEvidenceControllerRunResponses];
+
+export type UpdateDossierEvidenceControllerRunData = {
+    body: {
+        title?: string;
+    };
+    path: {
+        dossierEvidenceGroupId: string;
+        dossierId: string;
+        caseFileId: string;
+        dossierEvidenceId: string;
+    };
+    query?: never;
+    url: '/case-files/{caseFileId}/dossiers/{dossierId}/evidence-groups/{dossierEvidenceGroupId}/evidences/{dossierEvidenceId}';
+};
+
+export type UpdateDossierEvidenceControllerRunResponses = {
+    204: void;
+};
+
+export type UpdateDossierEvidenceControllerRunResponse = UpdateDossierEvidenceControllerRunResponses[keyof UpdateDossierEvidenceControllerRunResponses];
+
+export type DeleteDossierEvidenceGroupControllerRunData = {
+    body?: never;
+    path: {
+        dossierId: string;
+        caseFileId: string;
+        dossierEvidenceGroupId: string;
+    };
+    query?: never;
+    url: '/case-files/{caseFileId}/dossiers/{dossierId}/evidence-groups/{dossierEvidenceGroupId}';
+};
+
+export type DeleteDossierEvidenceGroupControllerRunResponses = {
+    204: void;
+};
+
+export type DeleteDossierEvidenceGroupControllerRunResponse = DeleteDossierEvidenceGroupControllerRunResponses[keyof DeleteDossierEvidenceGroupControllerRunResponses];
+
+export type ShowDossierEvidenceGroupControllerRunData = {
+    body?: never;
+    path: {
+        dossierId: string;
+        caseFileId: string;
+        dossierEvidenceGroupId: string;
+    };
+    query?: never;
+    url: '/case-files/{caseFileId}/dossiers/{dossierId}/evidence-groups/{dossierEvidenceGroupId}';
+};
+
+export type ShowDossierEvidenceGroupControllerRunResponses = {
+    200: {
+        id: string;
+        code: string;
+        name: string;
+        evidencesCount: number;
+        createdAt: string;
+        type: string;
+        revised: boolean;
+        description?: string;
+        evidenceGroup: {
+            id: string;
+            name: string;
+            code: string;
+            evidenceMetadataId?: string;
+        };
+        caseFile: {
+            id: string;
+            name: string;
+            code: string;
+        };
+    };
+};
+
+export type ShowDossierEvidenceGroupControllerRunResponse = ShowDossierEvidenceGroupControllerRunResponses[keyof ShowDossierEvidenceGroupControllerRunResponses];
+
+export type UpdateDossierEvidenceGroupControllerRunData = {
+    body: {
+        id: string;
+        name?: string;
+        description?: string;
+        revised?: boolean;
+    };
+    path: {
+        dossierId: string;
+        caseFileId: string;
+        dossierEvidenceGroupId: string;
+    };
+    query?: never;
+    url: '/case-files/{caseFileId}/dossiers/{dossierId}/evidence-groups/{dossierEvidenceGroupId}';
+};
+
+export type UpdateDossierEvidenceGroupControllerRunResponses = {
+    204: void;
+};
+
+export type UpdateDossierEvidenceGroupControllerRunResponse = UpdateDossierEvidenceGroupControllerRunResponses[keyof UpdateDossierEvidenceGroupControllerRunResponses];
+
+export type LinkDossierEvidencesControllerRunData = {
+    body: {
+        ids: Array<string>;
+    };
+    path: {
+        caseFileId: string;
+        dossierId: string;
+        caseFileToLinkId: string;
+    };
+    query?: never;
+    url: '/case-files/{caseFileId}/dossiers/{dossierId}/case-files-to-link/{caseFileToLinkId}/link-evidences';
+};
+
+export type LinkDossierEvidencesControllerRunResponses = {
+    201: unknown;
+};
+
+export type ListDossierEvidenceGroupsControllerRunData = {
+    body?: never;
+    path: {
+        caseFileId: string;
+        dossierId: string;
+    };
+    query?: {
+        filter?: {
+            evidenceGroupIds?: Array<string>;
+            dossierId?: string;
+            search?: string;
+            type?: 'FILE' | 'PHOTO' | 'VIDEO' | 'WEB_PLUGIN';
+            revised?: boolean;
+            originalCreatedAtFrom?: string;
+            originalCreatedAtUntil?: string;
+            id?: string;
+        };
+        order?: {
+            originalCreatedAt?: 'ASC' | 'DESC';
+            createdAt?: 'ASC' | 'DESC';
+        };
+        page?: {
+            number: number;
+            size: number;
+        };
+    };
+    url: '/case-files/{caseFileId}/dossiers/{dossierId}/evidence-groups';
+};
+
+export type ListDossierEvidenceGroupsControllerRunResponses = {
+    200: {
+        data?: Array<{
+            id: string;
+            code: string;
+            name: string;
+            evidencesCount: number;
+            originalCreatedAt: string;
+            type: string;
+            revised: boolean;
+        }>;
+        meta?: {
+            totalElements?: number;
+        };
+    };
+};
+
+export type ListDossierEvidenceGroupsControllerRunResponse = ListDossierEvidenceGroupsControllerRunResponses[keyof ListDossierEvidenceGroupsControllerRunResponses];
+
+export type ListDossierEvidencesControllerRunData = {
+    body?: never;
+    path: {
+        caseFileId: string;
+        dossierId: string;
+        dossierEvidenceGroupId: string;
+    };
+    query?: {
+        filter?: {
+            evidenceIds?: Array<string>;
+            dossierId?: string;
+            dossierEvidenceGroupId?: string;
+            capturedFrom?: string;
+            capturedUntil?: string;
+            title?: string;
+            id?: string;
+        };
+        order?: {
+            capturedAt?: 'ASC' | 'DESC';
+            createdAt?: 'ASC' | 'DESC';
+        };
+        page?: {
+            number: number;
+            size: number;
+        };
+    };
+    url: '/case-files/{caseFileId}/dossiers/{dossierId}/evidence-groups/{dossierEvidenceGroupId}/evidences';
+};
+
+export type ListDossierEvidencesControllerRunResponses = {
+    200: {
+        data?: Array<{
+            id: string;
+            title: string;
+            fileSize?: number;
+            fileName?: string;
+            type: string;
+            capturedAt: string;
+            custodyType: string;
+            dossierEvidenceGroupId: string;
+        }>;
+        meta?: {
+            totalElements?: number;
+        };
+    };
+};
+
+export type ListDossierEvidencesControllerRunResponse = ListDossierEvidencesControllerRunResponses[keyof ListDossierEvidencesControllerRunResponses];
+
+export type ListDossierEvidencesToLinkControllerRunData = {
+    body?: never;
+    path: {
+        caseFileId: string;
+        dossierId: string;
+        caseFileToLinkId: string;
+    };
+    query?: {
+        filter?: {
+            title?: string;
+            caseFileId?: string;
+            ids?: Array<string>;
+            evidenceGroupIds?: Array<string>;
+            capturedFrom?: string;
+            capturedUntil?: string;
+            relevant?: boolean;
+            id?: string;
+        };
+        order?: {
+            capturedAt?: 'ASC' | 'DESC';
+            evidenceGroupName?: 'ASC' | 'DESC';
+            createdAt?: 'ASC' | 'DESC';
+        };
+        page?: {
+            number: number;
+            size: number;
+        };
+    };
+    url: '/case-files/{caseFileId}/dossiers/{dossierId}/case-files-to-link/{caseFileToLinkId}/evidences-to-link';
+};
+
+export type ListDossierEvidencesToLinkControllerRunResponses = {
+    200: {
+        data?: Array<{
+            id: string;
+            title?: string;
+            fileSize?: number;
+            fileName: string;
+            capturedAt: string;
+            relevant: boolean;
+            custodyType: string;
+            evidenceGroup: {
+                id: string;
+                code: string;
+                name: string;
+                type: 'FILE' | 'PHOTO' | 'VIDEO' | 'WEB_PLUGIN';
+                caseFileId: string;
+            };
+            linked: boolean;
+        }>;
+        meta?: {
+            totalElements?: number;
+        };
+    };
+};
+
+export type ListDossierEvidencesToLinkControllerRunResponse = ListDossierEvidencesToLinkControllerRunResponses[keyof ListDossierEvidencesToLinkControllerRunResponses];
+
 export type ListDossierRecallRequestsControllerRunData = {
     body?: never;
     path: {
@@ -678,6 +1014,47 @@ export type ShowDossierDocumentUrlControllerRunResponses = {
 };
 
 export type ShowDossierDocumentUrlControllerRunResponse = ShowDossierDocumentUrlControllerRunResponses[keyof ShowDossierDocumentUrlControllerRunResponses];
+
+export type ShowDossierEvidenceDownloadUrlControllerRunData = {
+    body?: never;
+    path: {
+        dossierEvidenceGroupId: string;
+        dossierId: string;
+        caseFileId: string;
+        dossierEvidenceId: string;
+    };
+    query?: never;
+    url: '/case-files/{caseFileId}/dossiers/{dossierId}/evidence-groups/{dossierEvidenceGroupId}/evidences/{dossierEvidenceId}/download-url';
+};
+
+export type ShowDossierEvidenceDownloadUrlControllerRunResponses = {
+    200: {
+        downloadFileUrl: string;
+    };
+};
+
+export type ShowDossierEvidenceDownloadUrlControllerRunResponse = ShowDossierEvidenceDownloadUrlControllerRunResponses[keyof ShowDossierEvidenceDownloadUrlControllerRunResponses];
+
+export type ShowDossierEvidenceThumbnailControllerRunData = {
+    body?: never;
+    path: {
+        dossierEvidenceGroupId: string;
+        dossierId: string;
+        caseFileId: string;
+        dossierEvidenceId: string;
+        size: string;
+    };
+    query?: never;
+    url: '/case-files/{caseFileId}/dossiers/{dossierId}/evidence-groups/{dossierEvidenceGroupId}/evidences/{dossierEvidenceId}/thumbnail/{size}';
+};
+
+export type ShowDossierEvidenceThumbnailControllerRunResponses = {
+    200: {
+        url: string;
+    };
+};
+
+export type ShowDossierEvidenceThumbnailControllerRunResponse = ShowDossierEvidenceThumbnailControllerRunResponses[keyof ShowDossierEvidenceThumbnailControllerRunResponses];
 
 export type ShowDossierPackageUrlControllerRunData = {
     body?: never;

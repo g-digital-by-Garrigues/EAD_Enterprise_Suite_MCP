@@ -14,15 +14,7 @@ const inputSchema = z.object({
 
 export const signature_request_create = defineTool({
   name: "signature_request_create",
-  description:
-    "Create a new signature request (envelope) in DRAFT status. Returns immediately with the request ID. " +
-    "After creating, you must: (1) add documents via signature_request_add_document, " +
-    "(2) upload each document binary to its S3 URL (PUT, application/octet-stream, no auth headers), " +
-    "(3) wait for documents to reach READY_TO_SIGN status via signature_document_list, " +
-    "(4) add signatories via signature_participant_create, " +
-    "(5) set signature box positions via signature_coordinate_set (INTERPOSITION type only), " +
-    "(6) activate via activate_signature_request. " +
-    "To handle the entire flow in a single call (recommended), use signature_request_full_create instead.",
+  description: "Performs the signature_request_create operation against the GoCertius API. Review the API documentation for full field details.",
   inputSchema,
   annotations: {
     destructive: false,
@@ -30,7 +22,7 @@ export const signature_request_create = defineTool({
     requiresUserConfirmation: false,
   },
   pollable: false,
-  idempotencyWindowSeconds: 86400,
+  idempotencyWindowSeconds: 60,
   async execute(input, ctx) {
     const token = ctx.auth?.token ?? "";
     const sdkClient = createClient(
