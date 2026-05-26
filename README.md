@@ -80,7 +80,7 @@ See [docs/agent-prompts.md](docs/agent-prompts.md) for end-to-end prompt example
 
 ## Available Tools
 
-This server exposes **44 tools**:
+This server exposes **45 tools**:
 
 | Tool | Description |
 |------|-------------|
@@ -125,6 +125,7 @@ This server exposes **44 tools**:
 | `signature_participant_create` | Performs the signature_participant_create operation against the GoCertius API. |
 | `signature_participant_list` | Performs the signature_participant_list operation against the GoCertius API. |
 | `activate_signature_request` | Performs the activate_signature_request operation against the GoCertius API. |
+| `signature_coordinate_set` | Performs the signature_coordinate_set operation against the GoCertius API. |
 | `signature_certificate_get` | Performs the signature_certificate_get operation against the GoCertius API. |
 | `large_evidence_upload_initiate` | Performs the large_evidence_upload_initiate operation against the GoCertius API. |
 | `large_evidence_upload_complete` | Performs the large_evidence_upload_complete operation against the GoCertius API. |
