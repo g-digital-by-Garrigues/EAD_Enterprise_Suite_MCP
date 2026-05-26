@@ -9,9 +9,22 @@ import { evidence_get } from "./tools/evidence_get.js";
 import { evidence_group_create } from "./tools/evidence_group_create.js";
 import { evidence_group_list } from "./tools/evidence_group_list.js";
 import { dossier_create } from "./tools/dossier_create.js";
+import { dossier_update } from "./tools/dossier_update.js";
+import { dossier_certify } from "./tools/dossier_certify.js";
 import { dossier_list } from "./tools/dossier_list.js";
 import { dossier_get } from "./tools/dossier_get.js";
 import { dossier_template_list } from "./tools/dossier_template_list.js";
+import { dossier_preview } from "./tools/dossier_preview.js";
+import { dossier_document_url } from "./tools/dossier_document_url.js";
+import { dossier_package_url } from "./tools/dossier_package_url.js";
+import { dossier_visibility } from "./tools/dossier_visibility.js";
+import { dossier_delete } from "./tools/dossier_delete.js";
+import { dossier_group_certify } from "./tools/dossier_group_certify.js";
+import { dossier_evidence_link } from "./tools/dossier_evidence_link.js";
+import { dossier_evidence_list_to_link } from "./tools/dossier_evidence_list_to_link.js";
+import { dossier_evidence_list } from "./tools/dossier_evidence_list.js";
+import { dossier_evidence_get } from "./tools/dossier_evidence_get.js";
+import { dossier_evidence_delete } from "./tools/dossier_evidence_delete.js";
 import { notification_request_create } from "./tools/notification_request_create.js";
 import { notification_request_send } from "./tools/notification_request_send.js";
 import { notification_request_status } from "./tools/notification_request_status.js";
@@ -29,10 +42,8 @@ import { signature_request_add_document } from "./tools/signature_request_add_do
 import { signature_document_list } from "./tools/signature_document_list.js";
 import { signature_participant_create } from "./tools/signature_participant_create.js";
 import { signature_participant_list } from "./tools/signature_participant_list.js";
-import { signature_coordinate_set } from "./tools/signature_coordinate_set.js";
 import { activate_signature_request } from "./tools/activate_signature_request.js";
 import { signature_certificate_get } from "./tools/signature_certificate_get.js";
-import { signature_request_full_create } from "./tools/signature_request_full_create.js";
 import { large_evidence_upload_initiate } from "./tools/large_evidence_upload_initiate.js";
 import { large_evidence_upload_complete } from "./tools/large_evidence_upload_complete.js";
 
@@ -47,9 +58,22 @@ evidence_get,
 evidence_group_create,
 evidence_group_list,
 dossier_create,
+dossier_update,
+dossier_certify,
 dossier_list,
 dossier_get,
 dossier_template_list,
+dossier_preview,
+dossier_document_url,
+dossier_package_url,
+dossier_visibility,
+dossier_delete,
+dossier_group_certify,
+dossier_evidence_link,
+dossier_evidence_list_to_link,
+dossier_evidence_list,
+dossier_evidence_get,
+dossier_evidence_delete,
 notification_request_create,
 notification_request_send,
 notification_request_status,
@@ -67,10 +91,8 @@ signature_request_add_document,
 signature_document_list,
 signature_participant_create,
 signature_participant_list,
-signature_coordinate_set,
 activate_signature_request,
 signature_certificate_get,
-signature_request_full_create,
 large_evidence_upload_initiate,
 large_evidence_upload_complete,
   ],

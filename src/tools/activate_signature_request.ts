@@ -12,12 +12,7 @@ const inputSchema = z.object({
 
 export const activate_signature_request = defineTool({
   name: "activate_signature_request",
-  description:
-    "Activate a signature request, sending signature invitations to all participants. " +
-    "Prerequisites: documents added (signature_request_add_document + S3 upload), " +
-    "participants added (signature_participant_create), and for INTERPOSITION type, " +
-    "coordinates set (signature_coordinate_set). " +
-    "Use signature_request_full_create to handle the entire workflow in a single call.",
+  description: "Performs the activate_signature_request operation against the GoCertius API. Review the API documentation for full field details.",
   inputSchema,
   annotations: {
     destructive: false,
