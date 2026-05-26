@@ -39,6 +39,7 @@ Create "Certificados de evidencia" — tamper-evident PDFs that bundle one or mo
    - `dossier_certify` with `caseFileId` and `dossierId`
    - Status: `DRAFT` → `CERTIFYING` → `CERTIFIED`
    - Certification is asynchronous; poll `dossier_list` until status is `CERTIFIED`
+   - Note: `dossier_certify` has no SSE bridge — always poll regardless of runtime
 
 ## Express flow (single group)
 
