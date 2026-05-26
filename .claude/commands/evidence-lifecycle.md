@@ -68,7 +68,7 @@ evidence_seal(
 )
 ```
 
-Long-running — the MCP task stays open (working) until the group is sealed and certified. `evidencesCount` must match the number of evidence items added.
+Returns immediately — the group transitions asynchronously OPEN → CLOSING → CLOSED. Poll `evidence_group_list` until status is `CLOSED` before linking evidences to a Certificado de evidencia. `evidencesCount` must match the number of evidence items added.
 
 ### Step 5 — Read / verify
 
@@ -129,6 +129,6 @@ large_evidence_upload_complete(
 3. evidence_create(..., hash: sha256(file))  → { uploadFileUrl, id: evidenceId }
 4. PUT <uploadFileUrl> with file bytes
 5. evidence_seal(id: groupId, evidencesCount: 1)
-   ← task completes when sealed
+   ← returns immediately; poll evidence_group_list for status=CLOSED
 6. evidence_list(caseFileId, groupId)        → verify status: COMPLETED
 ```
