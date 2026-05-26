@@ -45,7 +45,7 @@ Use the individual tools when you need custom control over each step.
 - **Sequence**: `PARALLEL` (all sign simultaneously) or `CONFIGURABLE` (ordered signing).
 - **WhatsApp** (`sendWaUrl: true`): Only supported for `INTERPOSITION` type.
 - **Document states**: DRAFT → processing → `READY_TO_SIGN`. Must be `READY_TO_SIGN` before activation.
-- **Coordinates**: Required for `INTERPOSITION` only. Set before activation via `signature_coordinate_set`.
+- **Coordinates**: Required for **all** signature types (both `INTERPOSITION` and `ADVANCED`). Set before activation via `signature_coordinate_set`. Use `signature_request_full_create` to skip manual coordinate setup.
 
 ### IDs you need before starting
 
@@ -117,19 +117,19 @@ Call `signature_document_list(caseFileId, requestId)` every 5–10 seconds until
 
 **Do not activate before this step — the API will reject it.**
 
-### Step 6 — Set signature coordinates (INTERPOSITION only)
+### Step 6 — Set signature coordinates (all types)
 
 ```
 signature_coordinate_set(
   caseFileId: "<uuid>",
   requestId: "<sig-request-uuid>",
-  documentId: "<doc-uuid>",
+  documentId: "<doc-uuid>",        # the id you passed to signature_request_add_document
   signatoryId: "<participant-uuid>",
   coordinates: [{ page: 1, x: 30, y: 230 }]
 )
 ```
 
-Coordinates are PDF points from the bottom-left corner. Call once per signatory per document. Skip this step for `ADVANCED` type.
+Coordinates are PDF points from the bottom-left corner. Required for **both** `INTERPOSITION` and `ADVANCED` types. Call once per signatory per document. `signature_request_full_create` handles this automatically.
 
 ### Step 7 — Activate
 
@@ -146,6 +146,15 @@ Transitions to `ACTIVE` and sends signing invitations to all participants.
 - `signature_certificate_get(caseFileId, requestId)` — final legal certificate (only once `SIGNED` or `CLOSED`)
 
 ---
+
+## Common mistakes
+
+| Mistake | Effect | Fix |
+|---|---|---|
+| Skip `signature_coordinate_set` for `ADVANCED` type | `activate_signature_request` fails — coordinates required for all types | Always call `signature_coordinate_set` before activating, regardless of type |
+| Use the S3 resource UUID as `documentId` | Tool call fails (wrong ID) | Use the `id` you passed to `signature_request_add_document`, not the UUID in the S3 URL |
+| Add participant with `ADVANCED` type but no phone | API rejects with `isDefined` on `phoneNumber`/`phonePrefix` | Always supply `phoneNumber` + `phonePrefix` for ADVANCED signatories |
+| `activate_signature_request` before documents reach `READY_TO_SIGN` | API error | Poll `signature_document_list` until status is `READY_TO_SIGN` |
 
 ## Cancel a request
 
@@ -173,7 +182,7 @@ DRAFT → (activate) → ACTIVE → PARTIALLY_SIGNED → SIGNED → CLOSED
 5. PUT <url> with PDF bytes + checksum header
 6. signature_participant_create(...)                  → participantId
 7. [poll] signature_document_list(...)                → wait for READY_TO_SIGN
-8. signature_coordinate_set(..., documentId, participantId)
+8. signature_coordinate_set(..., documentId, participantId)  ← all types
 9. activate_signature_request(caseFileId, requestId)
 10. [later] signature_certificate_get(...)            → legal certificate
 ```

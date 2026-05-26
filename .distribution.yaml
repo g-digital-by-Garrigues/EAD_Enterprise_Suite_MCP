@@ -31,7 +31,7 @@ bundled_skills:
   - notification-lifecycle.md
   - evidence-lifecycle.md
   - dossier-lifecycle.md
-# Static tool inventory (44 tools — must equal toolsAllowList.length)
+# Static tool inventory (45 tools — must equal toolsAllowList.length)
 tools:
   - name: evidence_create
     description: "Performs the evidence_create operation against the GoCertius API."
@@ -115,6 +115,8 @@ tools:
     description: "Performs the signature_participant_list operation against the GoCertius API."
   - name: activate_signature_request
     description: "Performs the activate_signature_request operation against the GoCertius API."
+  - name: signature_coordinate_set
+    description: "Performs the signature_coordinate_set operation against the GoCertius API."
   - name: signature_certificate_get
     description: "Performs the signature_certificate_get operation against the GoCertius API."
   - name: large_evidence_upload_initiate

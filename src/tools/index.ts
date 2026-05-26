@@ -40,6 +40,7 @@ export { signature_document_list } from "./signature_document_list.js";
 export { signature_participant_create } from "./signature_participant_create.js";
 export { signature_participant_list } from "./signature_participant_list.js";
 export { activate_signature_request } from "./activate_signature_request.js";
+export { signature_coordinate_set } from "./signature_coordinate_set.js";
 export { signature_certificate_get } from "./signature_certificate_get.js";
 export { large_evidence_upload_initiate } from "./large_evidence_upload_initiate.js";
 export { large_evidence_upload_complete } from "./large_evidence_upload_complete.js";
