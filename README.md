@@ -93,7 +93,7 @@ See [docs/agent-prompts.md](docs/agent-prompts.md) for end-to-end prompt example
 
 ## Available Tools
 
-This server exposes **45 tools**:
+This server exposes **46 tools**:
 
 | Tool | Description |
 |------|-------------|
@@ -125,6 +125,7 @@ This server exposes **45 tools**:
 | `notification_request_status` | Performs the notification_request_status operation against the GoCertius API. |
 | `notification_receiver_add` | Performs the notification_receiver_add operation against the GoCertius API. |
 | `notification_certificate_get` | Performs the notification_certificate_get operation against the GoCertius API. |
+| `case_file_create` | Performs the case_file_create operation against the GoCertius API. |
 | `case_file_list` | Performs the case_file_list operation against the GoCertius API. |
 | `case_file_get` | Performs the case_file_get operation against the GoCertius API. |
 | `session_login` | Performs the session_login operation against the GoCertius API. |
