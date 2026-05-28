@@ -97,52 +97,52 @@ This server exposes **46 tools**:
 
 | Tool | Description |
 |------|-------------|
-| `evidence_create` | Performs the evidence_create operation against the GoCertius API. |
-| `evidence_list` | Performs the evidence_list operation against the GoCertius API. |
-| `evidence_seal` | Performs the evidence_seal operation against the GoCertius API. |
-| `evidence_get` | Performs the evidence_get operation against the GoCertius API. |
-| `evidence_group_create` | Performs the evidence_group_create operation against the GoCertius API. |
-| `evidence_group_list` | Performs the evidence_group_list operation against the GoCertius API. |
-| `dossier_create` | Performs the dossier_create operation against the GoCertius API. |
-| `dossier_update` | Performs the dossier_update operation against the GoCertius API. |
-| `dossier_certify` | Performs the dossier_certify operation against the GoCertius API. |
-| `dossier_list` | Performs the dossier_list operation against the GoCertius API. |
-| `dossier_get` | Performs the dossier_get operation against the GoCertius API. |
-| `dossier_template_list` | Performs the dossier_template_list operation against the GoCertius API. |
-| `dossier_preview` | Performs the dossier_preview operation against the GoCertius API. |
-| `dossier_document_url` | Performs the dossier_document_url operation against the GoCertius API. |
-| `dossier_package_url` | Performs the dossier_package_url operation against the GoCertius API. |
-| `dossier_visibility` | Performs the dossier_visibility operation against the GoCertius API. |
-| `dossier_delete` | Performs the dossier_delete operation against the GoCertius API. |
-| `dossier_group_certify` | Performs the dossier_group_certify operation against the GoCertius API. |
-| `dossier_evidence_link` | Performs the dossier_evidence_link operation against the GoCertius API. |
-| `dossier_evidence_list_to_link` | Performs the dossier_evidence_list_to_link operation against the GoCertius API. |
-| `dossier_evidence_list` | Performs the dossier_evidence_list operation against the GoCertius API. |
-| `dossier_evidence_get` | Performs the dossier_evidence_get operation against the GoCertius API. |
-| `dossier_evidence_delete` | Performs the dossier_evidence_delete operation against the GoCertius API. |
-| `notification_request_create` | Performs the notification_request_create operation against the GoCertius API. |
-| `notification_request_send` | Performs the notification_request_send operation against the GoCertius API. |
-| `notification_request_status` | Performs the notification_request_status operation against the GoCertius API. |
-| `notification_receiver_add` | Performs the notification_receiver_add operation against the GoCertius API. |
-| `notification_certificate_get` | Performs the notification_certificate_get operation against the GoCertius API. |
-| `case_file_create` | Performs the case_file_create operation against the GoCertius API. |
-| `case_file_list` | Performs the case_file_list operation against the GoCertius API. |
-| `case_file_get` | Performs the case_file_get operation against the GoCertius API. |
-| `session_login` | Performs the session_login operation against the GoCertius API. |
-| `session_info` | Performs the session_info operation against the GoCertius API. |
-| `use_case_list` | Performs the use_case_list operation against the GoCertius API. |
-| `signature_request_create` | Performs the signature_request_create operation against the GoCertius API. |
-| `signature_request_get` | Performs the signature_request_get operation against the GoCertius API. |
-| `signature_request_cancel` | Performs the signature_request_cancel operation against the GoCertius API. |
-| `signature_request_add_document` | Performs the signature_request_add_document operation against the GoCertius API. |
-| `signature_document_list` | Performs the signature_document_list operation against the GoCertius API. |
-| `signature_participant_create` | Performs the signature_participant_create operation against the GoCertius API. |
-| `signature_participant_list` | Performs the signature_participant_list operation against the GoCertius API. |
-| `activate_signature_request` | Performs the activate_signature_request operation against the GoCertius API. |
-| `signature_coordinate_set` | Performs the signature_coordinate_set operation against the GoCertius API. |
-| `signature_certificate_get` | Performs the signature_certificate_get operation against the GoCertius API. |
-| `large_evidence_upload_initiate` | Performs the large_evidence_upload_initiate operation against the GoCertius API. |
-| `large_evidence_upload_complete` | Performs the large_evidence_upload_complete operation against the GoCertius API. |
+| `evidence_create` | Performs the evidence_create operation against the EAD Enterprise Suite API. |
+| `evidence_list` | Performs the evidence_list operation against the EAD Enterprise Suite API. |
+| `evidence_seal` | Performs the evidence_seal operation against the EAD Enterprise Suite API. |
+| `evidence_get` | Performs the evidence_get operation against the EAD Enterprise Suite API. |
+| `evidence_group_create` | Performs the evidence_group_create operation against the EAD Enterprise Suite API. |
+| `evidence_group_list` | Performs the evidence_group_list operation against the EAD Enterprise Suite API. |
+| `dossier_create` | Performs the dossier_create operation against the EAD Enterprise Suite API. |
+| `dossier_update` | Performs the dossier_update operation against the EAD Enterprise Suite API. |
+| `dossier_certify` | Performs the dossier_certify operation against the EAD Enterprise Suite API. |
+| `dossier_list` | Performs the dossier_list operation against the EAD Enterprise Suite API. |
+| `dossier_get` | Performs the dossier_get operation against the EAD Enterprise Suite API. |
+| `dossier_template_list` | Performs the dossier_template_list operation against the EAD Enterprise Suite API. |
+| `dossier_preview` | Performs the dossier_preview operation against the EAD Enterprise Suite API. |
+| `dossier_document_url` | Performs the dossier_document_url operation against the EAD Enterprise Suite API. |
+| `dossier_package_url` | Performs the dossier_package_url operation against the EAD Enterprise Suite API. |
+| `dossier_visibility` | Performs the dossier_visibility operation against the EAD Enterprise Suite API. |
+| `dossier_delete` | Performs the dossier_delete operation against the EAD Enterprise Suite API. |
+| `dossier_group_certify` | Performs the dossier_group_certify operation against the EAD Enterprise Suite API. |
+| `dossier_evidence_link` | Performs the dossier_evidence_link operation against the EAD Enterprise Suite API. |
+| `dossier_evidence_list_to_link` | Performs the dossier_evidence_list_to_link operation against the EAD Enterprise Suite API. |
+| `dossier_evidence_list` | Performs the dossier_evidence_list operation against the EAD Enterprise Suite API. |
+| `dossier_evidence_get` | Performs the dossier_evidence_get operation against the EAD Enterprise Suite API. |
+| `dossier_evidence_delete` | Performs the dossier_evidence_delete operation against the EAD Enterprise Suite API. |
+| `notification_request_create` | Performs the notification_request_create operation against the EAD Enterprise Suite API. |
+| `notification_request_send` | Performs the notification_request_send operation against the EAD Enterprise Suite API. |
+| `notification_request_status` | Performs the notification_request_status operation against the EAD Enterprise Suite API. |
+| `notification_receiver_add` | Performs the notification_receiver_add operation against the EAD Enterprise Suite API. |
+| `notification_certificate_get` | Performs the notification_certificate_get operation against the EAD Enterprise Suite API. |
+| `case_file_create` | Performs the case_file_create operation against the EAD Enterprise Suite API. |
+| `case_file_list` | Performs the case_file_list operation against the EAD Enterprise Suite API. |
+| `case_file_get` | Performs the case_file_get operation against the EAD Enterprise Suite API. |
+| `session_login` | Performs the session_login operation against the EAD Enterprise Suite API. |
+| `session_info` | Performs the session_info operation against the EAD Enterprise Suite API. |
+| `use_case_list` | Performs the use_case_list operation against the EAD Enterprise Suite API. |
+| `signature_request_create` | Performs the signature_request_create operation against the EAD Enterprise Suite API. |
+| `signature_request_get` | Performs the signature_request_get operation against the EAD Enterprise Suite API. |
+| `signature_request_cancel` | Performs the signature_request_cancel operation against the EAD Enterprise Suite API. |
+| `signature_request_add_document` | Performs the signature_request_add_document operation against the EAD Enterprise Suite API. |
+| `signature_document_list` | Performs the signature_document_list operation against the EAD Enterprise Suite API. |
+| `signature_participant_create` | Performs the signature_participant_create operation against the EAD Enterprise Suite API. |
+| `signature_participant_list` | Performs the signature_participant_list operation against the EAD Enterprise Suite API. |
+| `activate_signature_request` | Performs the activate_signature_request operation against the EAD Enterprise Suite API. |
+| `signature_coordinate_set` | Performs the signature_coordinate_set operation against the EAD Enterprise Suite API. |
+| `signature_certificate_get` | Performs the signature_certificate_get operation against the EAD Enterprise Suite API. |
+| `large_evidence_upload_initiate` | Performs the large_evidence_upload_initiate operation against the EAD Enterprise Suite API. |
+| `large_evidence_upload_complete` | Performs the large_evidence_upload_complete operation against the EAD Enterprise Suite API. |
 
 ## Coexistence
 
