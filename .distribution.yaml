@@ -123,3 +123,7 @@ tools:
     description: "Performs the large_evidence_upload_initiate operation against the GoCertius API."
   - name: large_evidence_upload_complete
     description: "Performs the large_evidence_upload_complete operation against the GoCertius API."
+
+# n8n Verified Community Node connector branding (Epic 11 Story 11.3).
+n8n_connector_display_name: "EAD Enterprise Suite"
+n8n_connector_description: "EAD Enterprise Suite connector for n8n — the full EAD Trust enterprise Digital Trust platform for your n8n automations. Signature workflows, certified evidence with multipart large-file upload, certified notifications, dossier lifecycle, and case-file management. 39 operations. Maintained by g-digital by Garrigues — an eIDAS-qualified trust services provider."
