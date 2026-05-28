@@ -27,6 +27,7 @@ export { notification_request_send } from "./notification_request_send.js";
 export { notification_request_status } from "./notification_request_status.js";
 export { notification_receiver_add } from "./notification_receiver_add.js";
 export { notification_certificate_get } from "./notification_certificate_get.js";
+export { case_file_create } from "./case_file_create.js";
 export { case_file_list } from "./case_file_list.js";
 export { case_file_get } from "./case_file_get.js";
 export { session_login } from "./session_login.js";

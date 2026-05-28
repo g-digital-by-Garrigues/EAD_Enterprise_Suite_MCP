@@ -14,7 +14,7 @@ const inputSchema = z.object({
 
 export const signature_participant_list = defineTool({
   name: "signature_participant_list",
-  description: "Performs the signature_participant_list operation against the GoCertius API. Review the API documentation for full field details.",
+  description: "Lists all participants of a signature request. Requires: signature_request_create → requestId, case_file_create → caseFileId. Returns roles, contact details, and signing status.",
   inputSchema,
   annotations: {
     destructive: false,

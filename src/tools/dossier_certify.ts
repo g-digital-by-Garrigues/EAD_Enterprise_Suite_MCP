@@ -12,7 +12,7 @@ const inputSchema = z.object({
 
 export const dossier_certify = defineTool({
   name: "dossier_certify",
-  description: "Performs the dossier_certify operation against the GoCertius API. Review the API documentation for full field details.",
+  description: "Certifies a dossier, generating a tamper-evident PDF and locking all linked evidence. Requires: dossier_create → dossierId, dossier_evidence_link (evidence linked), case_file_create → caseFileId. ASYNC: transitions DRAFT → CERTIFYING → CERTIFIED. Poll dossier_list until dossierId status === CERTIFIED.",
   inputSchema,
   annotations: {
     destructive: false,

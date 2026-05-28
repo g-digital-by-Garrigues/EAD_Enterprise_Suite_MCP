@@ -14,7 +14,7 @@ const inputSchema = z.object({
 
 export const signature_coordinate_set = defineTool({
   name: "signature_coordinate_set",
-  description: "Performs the signature_coordinate_set operation against the GoCertius API. Review the API documentation for full field details.",
+  description: "Sets the visual position of the signature field on a document page. Requires: signature_participant_create → signatoryId, signature_request_add_document → documentId, signature_request_create → requestId, case_file_create → caseFileId. Provide coordinates as array of {page (1-based), x (points from left), y (points from bottom)}. Required for all signature types (INTERPOSITION and ADVANCED) before activation.",
   inputSchema,
   annotations: {
     destructive: false,

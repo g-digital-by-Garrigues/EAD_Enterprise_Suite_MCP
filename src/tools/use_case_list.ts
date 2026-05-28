@@ -14,7 +14,7 @@ const inputSchema = z.object({
 
 export const use_case_list = defineTool({
   name: "use_case_list",
-  description: "Performs the use_case_list operation against the GoCertius API. Review the API documentation for full field details.",
+  description: "Lists available use cases for the account. Use cases define the allowed signature workflows and document types. Returns useCaseId values needed for signature_request_create.",
   inputSchema,
   annotations: {
     destructive: false,

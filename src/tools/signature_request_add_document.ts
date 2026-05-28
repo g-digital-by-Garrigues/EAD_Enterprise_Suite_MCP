@@ -14,7 +14,7 @@ const inputSchema = z.object({
 
 export const signature_request_add_document = defineTool({
   name: "signature_request_add_document",
-  description: "Performs the signature_request_add_document operation against the GoCertius API. Review the API documentation for full field details.",
+  description: "Adds a document to a DRAFT signature request. Requires: signature_request_create → requestId, case_file_create → caseFileId. Provide a string `id` for the document. Compute SHA-256 hex hash of the PDF before calling. Returns documentId and url (presigned S3 upload URL) — PUT the PDF bytes to url before adding participants. Cannot add documents after activate_signature_request is called.",
   inputSchema,
   annotations: {
     destructive: false,

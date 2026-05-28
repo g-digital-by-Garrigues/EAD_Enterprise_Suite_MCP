@@ -14,7 +14,7 @@ const inputSchema = z.object({
 
 export const dossier_evidence_link = defineTool({
   name: "dossier_evidence_link",
-  description: "Performs the dossier_evidence_link operation against the GoCertius API. Review the API documentation for full field details.",
+  description: "Links evidence items from a sealed group to a dossier. Requires: dossier_create → dossierId, evidence_seal (CLOSED), case_file_create → caseFileId. Pass the ids array of evidence UUIDs. Can be called multiple times for evidence from different case files.",
   inputSchema,
   annotations: {
     destructive: false,

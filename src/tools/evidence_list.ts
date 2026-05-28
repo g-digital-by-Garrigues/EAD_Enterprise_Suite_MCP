@@ -14,7 +14,7 @@ const inputSchema = z.object({
 
 export const evidence_list = defineTool({
   name: "evidence_list",
-  description: "Performs the evidence_list operation against the GoCertius API. Review the API documentation for full field details.",
+  description: "Lists all evidence records in a specific evidence group. Requires: caseFileId and evidenceGroupId. Returns paginated list with IDs, titles, status, and timestamps.",
   inputSchema,
   annotations: {
     destructive: false,

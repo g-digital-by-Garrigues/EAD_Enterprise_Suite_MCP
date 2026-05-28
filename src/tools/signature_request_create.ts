@@ -14,7 +14,7 @@ const inputSchema = z.object({
 
 export const signature_request_create = defineTool({
   name: "signature_request_create",
-  description: "Performs the signature_request_create operation against the GoCertius API. Review the API documentation for full field details.",
+  description: "Creates a new signature request in DRAFT status. Requires: case_file_create → caseFileId. Generate a UUID v4 for `id`. Set deadline as ISO 8601 datetime (max ~30 days ahead). Returns requestId. Add documents with signature_request_add_document and participants with signature_participant_create before activating.",
   inputSchema,
   annotations: {
     destructive: false,
