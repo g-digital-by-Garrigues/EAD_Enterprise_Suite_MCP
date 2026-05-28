@@ -14,7 +14,7 @@ const inputSchema = z.object({
 
 export const dossier_group_certify = defineTool({
   name: "dossier_group_certify",
-  description: "Performs the dossier_group_certify operation against the GoCertius API. Review the API documentation for full field details.",
+  description: "Creates AND certifies a dossier from a single sealed evidence group in one call (express path). Requires: evidence_seal (CLOSED), case_file_create → caseFileId, evidence_group_create → evidenceGroupId. Generate a UUID v4 string for `id`. Returns dossierId with CERTIFYING status → poll until CERTIFIED.",
   inputSchema,
   annotations: {
     destructive: false,

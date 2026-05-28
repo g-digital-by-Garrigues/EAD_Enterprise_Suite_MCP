@@ -14,7 +14,7 @@ const inputSchema = z.object({
 
 export const dossier_list = defineTool({
   name: "dossier_list",
-  description: "Performs the dossier_list operation against the GoCertius API. Review the API documentation for full field details.",
+  description: "Lists all dossiers in a case file. Requires: caseFileId. Returns paginated list with IDs, names, status, and creation dates.",
   inputSchema,
   annotations: {
     destructive: false,

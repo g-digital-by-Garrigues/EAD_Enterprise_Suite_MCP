@@ -14,7 +14,7 @@ const inputSchema = z.object({
 
 export const signature_document_list = defineTool({
   name: "signature_document_list",
-  description: "Performs the signature_document_list operation against the GoCertius API. Review the API documentation for full field details.",
+  description: "Lists documents in a signature request with their signing status per document. Requires: signature_request_create → requestId, case_file_create → caseFileId. Returns status per document (PENDING|READY_TO_SIGN|PARTIALLY_SIGNED|SIGNED|REJECTED|ERROR). Poll until the target document status === SIGNED before calling signature_certificate_get.",
   inputSchema,
   annotations: {
     destructive: false,

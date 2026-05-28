@@ -14,7 +14,7 @@ const inputSchema = z.object({
 
 export const signature_participant_create = defineTool({
   name: "signature_participant_create",
-  description: "Performs the signature_participant_create operation against the GoCertius API. Review the API documentation for full field details.",
+  description: "Adds a participant (signatory, observer, or validator) to a document in a DRAFT signature request. Requires: signature_request_add_document → documentId + file uploaded to S3, signature_request_create → requestId, case_file_create → caseFileId. Use role SIGNATORY for required signers, OBSERVER for read-only, VALIDATOR for approvers. Always supply phonePrefix (+34) and phoneNumber. Returns signatoryId. Add at least one SIGNATORY before activating.",
   inputSchema,
   annotations: {
     destructive: false,

@@ -12,7 +12,7 @@ const inputSchema = z.object({
 
 export const signature_certificate_get = defineTool({
   name: "signature_certificate_get",
-  description: "Performs the signature_certificate_get operation against the GoCertius API. Review the API documentation for full field details.",
+  description: "Retrieves the signed document certificate PDF. Requires: activate_signature_request (document fully SIGNED), signature_request_add_document → documentId, signature_request_create → requestId, case_file_create → caseFileId. Returns documentUrl (signed PDF certificate). ASYNC: poll until documentUrl is available.",
   inputSchema,
   annotations: {
     destructive: false,

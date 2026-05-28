@@ -14,7 +14,7 @@ const inputSchema = z.object({
 
 export const notification_certificate_get = defineTool({
   name: "notification_certificate_get",
-  description: "Performs the notification_certificate_get operation against the GoCertius API. Review the API documentation for full field details.",
+  description: "Generates a PDF certificate for a specific receiver proving delivery of the notification. Requires: notification_request_send (delivered), notification_receiver_add → receiverId, notificationRequestId, caseFileId. Generate a UUID v4 for `id`. Returns pdfUrl when status reaches CERTIFIED.",
   inputSchema,
   annotations: {
     destructive: false,

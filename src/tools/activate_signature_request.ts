@@ -12,7 +12,7 @@ const inputSchema = z.object({
 
 export const activate_signature_request = defineTool({
   name: "activate_signature_request",
-  description: "Performs the activate_signature_request operation against the GoCertius API. Review the API documentation for full field details.",
+  description: "Activates a signature request, transitioning from DRAFT to ACTIVE and sending notifications to all signatories. Requires: signature_request_create → requestId (DRAFT), at least one SIGNATORY added, all documents uploaded and coordinates set, case_file_create → caseFileId. IRREVERSIBLE: cannot add documents or participants after activation. ASYNC: poll signature_document_list until document status === SIGNED.",
   inputSchema,
   annotations: {
     destructive: false,

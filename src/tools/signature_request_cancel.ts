@@ -12,7 +12,7 @@ const inputSchema = z.object({
 
 export const signature_request_cancel = defineTool({
   name: "signature_request_cancel",
-  description: "Performs the signature_request_cancel operation against the GoCertius API. Review the API documentation for full field details.",
+  description: "Cancels an active signature request. Requires: activate_signature_request (ACTIVE status), requestId, caseFileId. Transitions to CANCELLED. Cannot be undone.",
   inputSchema,
   annotations: {
     destructive: false,

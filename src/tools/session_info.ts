@@ -12,7 +12,7 @@ const inputSchema = z.object({
 
 export const session_info = defineTool({
   name: "session_info",
-  description: "Performs the session_info operation against the GoCertius API. Review the API documentation for full field details.",
+  description: "Retrieves information about the current authenticated session including userId, account, and token expiry. No required parameters.",
   inputSchema,
   annotations: {
     destructive: false,
