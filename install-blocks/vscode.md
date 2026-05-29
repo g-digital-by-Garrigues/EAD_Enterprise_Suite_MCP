@@ -4,7 +4,7 @@
     "ead-enterprise-suite": {
       "args": [
         "-y",
-        "mcp-ead-enterprise-suite"
+        "@g-digital/mcp-ead-enterprise-suite"
       ],
       "command": "npx",
       "env": {
