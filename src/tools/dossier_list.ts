@@ -14,7 +14,7 @@ const inputSchema = z.object({
 
 export const dossier_list = defineTool({
   name: "dossier_list",
-  description: "Lists all dossiers in a case file. Requires: caseFileId. Returns paginated list with IDs, names, status, and creation dates.",
+  description: "Lists all dossiers in a case file. Requires: caseFileId. Returns paginated list with IDs, names, status, and creation dates. Use to monitor certification progress — poll until status: CERTIFIED.",
   inputSchema,
   annotations: {
     destructive: false,
@@ -27,7 +27,7 @@ export const dossier_list = defineTool({
     const token = ctx.auth?.token ?? "";
     const sdkClient = createClient(
       createConfig({
-        baseUrl: process.env.MCP_API_BASE_URL ?? "",
+        baseUrl: process.env.MCP_API_BASE_URL ?? "https://api-eadcustody.eadtrust.gocertius.io",
         headers: {
           Authorization: `Bearer ${token}`,
           ...(ctx.correlationId ? { "X-Correlation-Id": ctx.correlationId } : {}),

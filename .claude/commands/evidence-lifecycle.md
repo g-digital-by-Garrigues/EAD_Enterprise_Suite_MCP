@@ -51,10 +51,11 @@ Returns `{ uploadFileUrl: "<presigned-s3-url>", ... }`.
 ```
 PUT <uploadFileUrl>
 Content-Type: application/octet-stream
+x-amz-checksum-sha256: <base64-encoded SHA-256>   # base64 of the same hash (not hex)
 Body: <raw file bytes>
 ```
 
-Upload the raw file bytes to the presigned S3 URL via HTTP PUT. No auth headers needed — the URL already contains the credentials.
+Upload the raw file bytes to the presigned S3 URL via HTTP PUT. The `x-amz-checksum-sha256` header is required — compute it with: `openssl dgst -sha256 -binary <file> | base64`
 
 > Skip this step for `custodyType: "EXTERNAL"` — EAD only records the hash, you keep the file.
 

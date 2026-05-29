@@ -22,6 +22,7 @@ export { dossier_evidence_list_to_link } from "./dossier_evidence_list_to_link.j
 export { dossier_evidence_list } from "./dossier_evidence_list.js";
 export { dossier_evidence_get } from "./dossier_evidence_get.js";
 export { dossier_evidence_delete } from "./dossier_evidence_delete.js";
+export { notification_document_add } from "./notification_document_add.js";
 export { notification_request_create } from "./notification_request_create.js";
 export { notification_request_send } from "./notification_request_send.js";
 export { notification_request_status } from "./notification_request_status.js";
@@ -33,6 +34,8 @@ export { case_file_get } from "./case_file_get.js";
 export { session_login } from "./session_login.js";
 export { session_info } from "./session_info.js";
 export { use_case_list } from "./use_case_list.js";
+export { signature_group_create } from "./signature_group_create.js";
+export { signature_group_list } from "./signature_group_list.js";
 export { signature_request_create } from "./signature_request_create.js";
 export { signature_request_get } from "./signature_request_get.js";
 export { signature_request_cancel } from "./signature_request_cancel.js";
@@ -40,6 +43,7 @@ export { signature_request_add_document } from "./signature_request_add_document
 export { signature_document_list } from "./signature_document_list.js";
 export { signature_participant_create } from "./signature_participant_create.js";
 export { signature_participant_list } from "./signature_participant_list.js";
+export { assign_validator_to_signatory } from "./assign_validator_to_signatory.js";
 export { activate_signature_request } from "./activate_signature_request.js";
 export { signature_coordinate_set } from "./signature_coordinate_set.js";
 export { signature_certificate_get } from "./signature_certificate_get.js";

@@ -2,39 +2,7 @@
 
 Manage the full digital signature workflow via EAD Enterprise Suite.
 
-## Quick path (recommended)
-
-Use `signature_request_full_create` to handle the **entire flow in a single call** — it downloads the document, computes the SHA-256, uploads to S3, adds participants, sets coordinates, and activates. The task stays open until all signatories sign or reject.
-
-```
-signature_request_full_create(
-  caseFileId: "<uuid>",           # from case_file_list
-  name: "My Signature Request",
-  language: "es_ES",
-  signatureType: "INTERPOSITION", # or "ADVANCED"
-  deadline: "2026-06-30T23:59:59.000Z",
-  documentUrl: "https://example.com/contract.pdf",
-  documentTitle: "Collaboration Agreement",
-  signatories: [
-    {
-      firstName: "Ana",
-      lastName: "García",
-      email: "ana@empresa.com",
-      phonePrefix: "+34",         # must include the + sign
-      phoneNumber: "600000000",
-      signaturePage: 1,
-      signatureX: 30,
-      signatureY: 230
-    }
-  ]
-)
-```
-
-Returns when all participants have signed or when one rejects.
-
----
-
-## Step-by-step path (advanced / fine-grained control)
+## Step-by-step path
 
 Use the individual tools when you need custom control over each step.
 
@@ -45,12 +13,12 @@ Use the individual tools when you need custom control over each step.
 - **Sequence**: `PARALLEL` (all sign simultaneously) or `CONFIGURABLE` (ordered signing).
 - **WhatsApp** (`sendWaUrl: true`): Only supported for `INTERPOSITION` type.
 - **Document states**: DRAFT → processing → `READY_TO_SIGN`. Must be `READY_TO_SIGN` before activation.
-- **Coordinates**: Required for **all** signature types (both `INTERPOSITION` and `ADVANCED`). Set before activation via `signature_coordinate_set`. Use `signature_request_full_create` to skip manual coordinate setup.
+- **Coordinates**: Required for **all** signature types (both `INTERPOSITION` and `ADVANCED`). Set before activation via `signature_coordinate_set`.
 
 ### IDs you need before starting
 
 - `caseFileId` — from `case_file_list` (use the `id` UUID, not the code like PR82)
-- `userId` — returned by `session_login` in the `userId` field
+- `userId` — returned by `session_info` (no parameters needed)
 
 ### Step 1 — Create the signature request
 
@@ -67,7 +35,7 @@ signature_request_create(
 )
 ```
 
-Returns `{ id, status: "DRAFT" }`.
+Returns `{}` on success (the `id` you provided becomes the requestId).
 
 ### Step 2 — Register document
 
@@ -83,7 +51,7 @@ signature_request_add_document(
 )
 ```
 
-Returns `{ url: "<presigned-s3-url>", id: "<documentId>" }`.
+Returns `{ url: "<presigned-s3-url>" }`. The documentId is the `id` you passed in this call.
 
 ### Step 3 — Upload document to S3
 
@@ -113,9 +81,11 @@ signature_participant_create(
 
 ### Step 5 — Poll until READY_TO_SIGN
 
-Call `signature_document_list(caseFileId, requestId)` every 5–10 seconds until all documents show `status: "READY_TO_SIGN"`. Typically 15–60 seconds for files under 4 MB.
+Call `signature_request_get(caseFileId, requestId)` and inspect the document statuses. Alternatively verify with the API directly. Typically 15–60 seconds for files under 4 MB.
 
-**Do not activate before this step — the API will reject it.**
+**Do not activate before documents are processed — the API will return an error.**
+
+> Note: `signature_document_list` with a `documentId` returns **participant signing status**, not document processing status. Use `signature_request_get` to check if documents have reached `READY_TO_SIGN`.
 
 ### Step 6 — Set signature coordinates (all types)
 
@@ -129,7 +99,7 @@ signature_coordinate_set(
 )
 ```
 
-Coordinates are PDF points from the bottom-left corner. Required for **both** `INTERPOSITION` and `ADVANCED` types. Call once per signatory per document. `signature_request_full_create` handles this automatically.
+Coordinates are PDF points from the bottom-left corner. Required for **both** `INTERPOSITION` and `ADVANCED` types. Call once per signatory per document.
 
 ### Step 7 — Activate
 
@@ -142,8 +112,8 @@ Transitions to `ACTIVE` and sends signing invitations to all participants.
 ### Step 8 — Monitor and retrieve certificate
 
 - `signature_request_get(caseFileId, requestId)` — overall status
-- `signature_document_list(caseFileId, requestId)` — per-document signing progress
-- `signature_certificate_get(caseFileId, requestId)` — final legal certificate (only once `SIGNED` or `CLOSED`)
+- `signature_document_list(caseFileId, requestId, documentId)` — per-participant signing progress for a specific document
+- `signature_certificate_get(caseFileId, requestId, documentId)` — final legal certificate for a specific document (only once `SIGNED`)
 
 ---
 
@@ -175,14 +145,14 @@ DRAFT → (activate) → ACTIVE → PARTIALLY_SIGNED → SIGNED → CLOSED
 ## Example — full step-by-step sequence
 
 ```
-1. session_login()                                    → userId
+1. session_info()                                     → userId
 2. case_file_list(userId)                             → caseFileId
-3. signature_request_create(...)                      → requestId
-4. signature_request_add_document(...)                → { url, documentId }
+3. signature_request_create(...)                      → requestId (= id you provided)
+4. signature_request_add_document(...)                → { url }  (documentId = id you provided)
 5. PUT <url> with PDF bytes + checksum header
-6. signature_participant_create(...)                  → participantId
-7. [poll] signature_document_list(...)                → wait for READY_TO_SIGN
+6. signature_participant_create(...)                  → participantId (= id you provided)
+7. [poll] signature_request_get(...)                  → wait until document status READY_TO_SIGN
 8. signature_coordinate_set(..., documentId, participantId)  ← all types
 9. activate_signature_request(caseFileId, requestId)
-10. [later] signature_certificate_get(...)            → legal certificate
+10. [later] signature_certificate_get(caseFileId, requestId, documentId)  → legal certificate
 ```

@@ -14,7 +14,7 @@ const inputSchema = z.object({
 
 export const signature_participant_create = defineTool({
   name: "signature_participant_create",
-  description: "Adds a participant (signatory, observer, or validator) to a document in a DRAFT signature request. Requires: signature_request_add_document → documentId + file uploaded to S3, signature_request_create → requestId, case_file_create → caseFileId. Use role SIGNATORY for required signers, OBSERVER for read-only, VALIDATOR for approvers. Always supply phonePrefix (+34) and phoneNumber. Returns signatoryId. Add at least one SIGNATORY before activating.",
+  description: "Adds a participant (signatory, observer, or validator) to a document in a DRAFT signature request. Requires: signature_request_add_document → documentId + file uploaded to S3, signature_request_create → requestId, case_file_create → caseFileId. Use role SIGNATORY for required signers, OBSERVER for read-only, VALIDATOR for approvers. For ADVANCED type: phonePrefix and phoneNumber are required. For INTERPOSITION type: phone is optional. Returns signatoryId. Add at least one SIGNATORY before activating. For VALIDATOR role: do NOT include groupId or linkToAllDocuments — use assign_validator_to_signatory to link the validator to a specific signatory after creation.",
   inputSchema,
   annotations: {
     destructive: false,
@@ -27,7 +27,7 @@ export const signature_participant_create = defineTool({
     const token = ctx.auth?.token ?? "";
     const sdkClient = createClient(
       createConfig({
-        baseUrl: process.env.MCP_API_BASE_URL ?? "",
+        baseUrl: process.env.MCP_API_BASE_URL ?? "https://api-eadcustody.eadtrust.gocertius.io",
         headers: {
           Authorization: `Bearer ${token}`,
           ...(ctx.correlationId ? { "X-Correlation-Id": ctx.correlationId } : {}),

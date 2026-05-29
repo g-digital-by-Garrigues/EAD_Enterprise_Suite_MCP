@@ -25,16 +25,20 @@ import { dossier_evidence_list_to_link } from "./tools/dossier_evidence_list_to_
 import { dossier_evidence_list } from "./tools/dossier_evidence_list.js";
 import { dossier_evidence_get } from "./tools/dossier_evidence_get.js";
 import { dossier_evidence_delete } from "./tools/dossier_evidence_delete.js";
+import { notification_document_add } from "./tools/notification_document_add.js";
 import { notification_request_create } from "./tools/notification_request_create.js";
 import { notification_request_send } from "./tools/notification_request_send.js";
 import { notification_request_status } from "./tools/notification_request_status.js";
 import { notification_receiver_add } from "./tools/notification_receiver_add.js";
 import { notification_certificate_get } from "./tools/notification_certificate_get.js";
+import { case_file_create } from "./tools/case_file_create.js";
 import { case_file_list } from "./tools/case_file_list.js";
 import { case_file_get } from "./tools/case_file_get.js";
 import { session_login } from "./tools/session_login.js";
 import { session_info } from "./tools/session_info.js";
 import { use_case_list } from "./tools/use_case_list.js";
+import { signature_group_create } from "./tools/signature_group_create.js";
+import { signature_group_list } from "./tools/signature_group_list.js";
 import { signature_request_create } from "./tools/signature_request_create.js";
 import { signature_request_get } from "./tools/signature_request_get.js";
 import { signature_request_cancel } from "./tools/signature_request_cancel.js";
@@ -42,6 +46,7 @@ import { signature_request_add_document } from "./tools/signature_request_add_do
 import { signature_document_list } from "./tools/signature_document_list.js";
 import { signature_participant_create } from "./tools/signature_participant_create.js";
 import { signature_participant_list } from "./tools/signature_participant_list.js";
+import { assign_validator_to_signatory } from "./tools/assign_validator_to_signatory.js";
 import { activate_signature_request } from "./tools/activate_signature_request.js";
 import { signature_coordinate_set } from "./tools/signature_coordinate_set.js";
 import { signature_certificate_get } from "./tools/signature_certificate_get.js";
@@ -75,16 +80,20 @@ dossier_evidence_list_to_link,
 dossier_evidence_list,
 dossier_evidence_get,
 dossier_evidence_delete,
+notification_document_add,
 notification_request_create,
 notification_request_send,
 notification_request_status,
 notification_receiver_add,
 notification_certificate_get,
+case_file_create,
 case_file_list,
 case_file_get,
 session_login,
 session_info,
 use_case_list,
+signature_group_create,
+signature_group_list,
 signature_request_create,
 signature_request_get,
 signature_request_cancel,
@@ -92,6 +101,7 @@ signature_request_add_document,
 signature_document_list,
 signature_participant_create,
 signature_participant_list,
+assign_validator_to_signatory,
 activate_signature_request,
 signature_coordinate_set,
 signature_certificate_get,

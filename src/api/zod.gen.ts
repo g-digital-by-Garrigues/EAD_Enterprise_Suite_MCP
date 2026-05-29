@@ -1516,6 +1516,42 @@ export const zCreateMassiveNotificationReceiversControllerRunPath = z.object({
     notificationRequestId: z.string()
 });
 
+export const zListNotificationDocumentsControllerRunPath = z.object({
+    caseFileId: z.string(),
+    notificationRequestId: z.string()
+});
+
+export const zListNotificationDocumentsControllerRunQuery = z.object({
+    filter: z.object({
+        fileName: z.string().optional(),
+        status: z.enum(['PENDING', 'READY_TO_SEND']).optional(),
+        id: z.string().optional()
+    }).optional(),
+    order: z.object({
+        createdAt: z.enum(['ASC', 'DESC']).optional()
+    }).optional(),
+    page: z.object({
+        number: z.number().gte(1).default(1),
+        size: z.number().gte(0).lte(100).default(20)
+    }).optional()
+});
+
+export const zCreateNotificationDocumentControllerRunBody = z.object({
+    id: z.uuid(),
+    fileName: z.string(),
+    hash: z.string(),
+    fileSize: z.number().optional()
+});
+
+export const zCreateNotificationDocumentControllerRunPath = z.object({
+    caseFileId: z.string(),
+    notificationRequestId: z.string()
+});
+
+export const zCreateNotificationDocumentControllerRunResponse = z.object({
+    url: z.string()
+});
+
 export const zListNotificationReceiversControllerRunPath = z.object({
     caseFileId: z.string(),
     notificationRequestId: z.string()
@@ -1606,6 +1642,12 @@ export const zCreateNotificationRequestControllerRunPath = z.object({
 export const zDeleteInvalidNotificationReceiversControllerRunPath = z.object({
     caseFileId: z.string(),
     notificationRequestId: z.string()
+});
+
+export const zDeleteNotificationDocumentControllerRunPath = z.object({
+    caseFileId: z.string(),
+    notificationRequestId: z.string(),
+    documentId: z.string()
 });
 
 export const zDeleteNotificationReceiverControllerRunPath = z.object({
@@ -1824,6 +1866,16 @@ export const zSendNotificationRequestControllerRunPath = z.object({
     notificationRequestId: z.string()
 });
 
+export const zShowNotificationDocumentDownloadUrlControllerRunPath = z.object({
+    caseFileId: z.string(),
+    notificationRequestId: z.string(),
+    documentId: z.string()
+});
+
+export const zShowNotificationDocumentDownloadUrlControllerRunResponse = z.object({
+    downloadUrl: z.string()
+});
+
 export const zUpdateNotificationRequestCaseFileIdControllerRunBody = z.object({
     caseFileId: z.uuid()
 });
@@ -2008,6 +2060,41 @@ export const zCreateMassiveSignatureParticipantsControllerRunPath = z.object({
     requestId: z.string()
 });
 
+export const zListSignatoryValidatorsControllerRunPath = z.object({
+    caseFileId: z.string(),
+    requestId: z.string(),
+    signatoryId: z.string()
+});
+
+export const zListSignatoryValidatorsControllerRunQuery = z.object({
+    page: z.object({
+        number: z.number().gte(1).default(1),
+        size: z.number().gte(0).lte(100).default(20)
+    }).optional()
+});
+
+export const zListSignatoryValidatorsControllerRunResponse = z.object({
+    data: z.array(z.object({
+        id: z.string(),
+        email: z.string(),
+        firstName: z.string(),
+        lastName: z.string()
+    })).optional(),
+    meta: z.object({
+        totalElements: z.number().optional()
+    }).optional()
+});
+
+export const zCreateSignatoryValidatorsControllerRunBody = z.object({
+    validatorIds: z.array(z.uuid()).max(100)
+});
+
+export const zCreateSignatoryValidatorsControllerRunPath = z.object({
+    caseFileId: z.string(),
+    requestId: z.string(),
+    signatoryId: z.string()
+});
+
 export const zListSignatureDocumentsControllerRunPath = z.object({
     caseFileId: z.string(),
     requestId: z.string()
@@ -2090,6 +2177,58 @@ export const zCreateSignatureDocumentControllerRunPath = z.object({
 
 export const zCreateSignatureDocumentControllerRunResponse = z.object({
     url: z.string().optional()
+});
+
+export const zListSignatureGroupsControllerRunPath = z.object({
+    caseFileId: z.string(),
+    requestId: z.string()
+});
+
+export const zListSignatureGroupsControllerRunQuery = z.object({
+    filter: z.object({
+        type: z.enum([
+            'Document',
+            'DocumentSignatory',
+            'Signatory'
+        ]).optional(),
+        documentId: z.uuid().optional(),
+        id: z.string().optional()
+    }).optional(),
+    order: z.object({
+        createdAt: z.enum(['ASC', 'DESC']).optional()
+    }).optional(),
+    page: z.object({
+        number: z.number().gte(1).default(1),
+        size: z.number().gte(0).lte(100).default(20)
+    }).optional()
+});
+
+export const zListSignatureGroupsControllerRunResponse = z.object({
+    data: z.array(z.object({
+        id: z.string(),
+        requestId: z.string(),
+        documentId: z.string().optional(),
+        type: z.string(),
+        index: z.number()
+    })).optional(),
+    meta: z.object({
+        totalElements: z.number().optional()
+    }).optional()
+});
+
+export const zCreateSignatureGroupControllerRunBody = z.object({
+    id: z.string(),
+    documentId: z.string().optional(),
+    type: z.enum([
+        'Document',
+        'DocumentSignatory',
+        'Signatory'
+    ])
+});
+
+export const zCreateSignatureGroupControllerRunPath = z.object({
+    caseFileId: z.string(),
+    requestId: z.string()
 });
 
 export const zListSignatureParticipantsControllerRunPath = z.object({
@@ -2287,6 +2426,13 @@ export const zDeleteInvalidSignatureParticipantsControllerRunPath = z.object({
     requestId: z.string()
 });
 
+export const zDeleteSignatoryValidatorControllerRunPath = z.object({
+    caseFileId: z.string(),
+    requestId: z.string(),
+    signatoryId: z.string(),
+    validatorId: z.string()
+});
+
 export const zDeleteSignatureDocumentControllerRunPath = z.object({
     caseFileId: z.string(),
     requestId: z.string(),
@@ -2301,6 +2447,12 @@ export const zUpdateSignatureDocumentControllerRunPath = z.object({
     caseFileId: z.string(),
     requestId: z.string(),
     documentId: z.string()
+});
+
+export const zDeleteSignatureGroupControllerRunPath = z.object({
+    caseFileId: z.string(),
+    requestId: z.string(),
+    groupId: z.string()
 });
 
 export const zDeleteSignatureParticipantControllerRunPath = z.object({
@@ -2429,6 +2581,49 @@ export const zDuplicateSignatureRequestControllerRunPath = z.object({
     requestId: z.string()
 });
 
+export const zListSignatoryValidatorsFromDocumentControllerRunPath = z.object({
+    caseFileId: z.string(),
+    requestId: z.string(),
+    documentId: z.string(),
+    signatoryId: z.string()
+});
+
+export const zListSignatoryValidatorsFromDocumentControllerRunQuery = z.object({
+    page: z.object({
+        number: z.number().gte(1).default(1),
+        size: z.number().gte(0).lte(100).default(20)
+    }).optional()
+});
+
+export const zListSignatoryValidatorsFromDocumentControllerRunResponse = z.object({
+    data: z.array(z.object({
+        id: z.string(),
+        email: z.string(),
+        firstName: z.string(),
+        lastName: z.string(),
+        status: z.enum([
+            'PENDING',
+            'READY_TO_VALIDATE',
+            'VALIDATED',
+            'REJECTED'
+        ])
+    })).optional(),
+    meta: z.object({
+        totalElements: z.number().optional()
+    }).optional()
+});
+
+export const zLinkSignatoryValidatorsToDocumentControllerRunBody = z.object({
+    validatorIds: z.array(z.uuid()).max(100)
+});
+
+export const zLinkSignatoryValidatorsToDocumentControllerRunPath = z.object({
+    caseFileId: z.string(),
+    requestId: z.string(),
+    documentId: z.string(),
+    signatoryId: z.string()
+});
+
 export const zListDocumentObserversControllerRunPath = z.object({
     caseFileId: z.string(),
     requestId: z.string(),
@@ -2492,6 +2687,69 @@ export const zListDocumentSignatoriesControllerRunResponse = z.object({
         participantStats: z.object({
             validators: z.number()
         })
+    })).optional(),
+    meta: z.object({
+        totalElements: z.number().optional()
+    }).optional()
+});
+
+export const zListSignatoryValidatorsFromDocumentWithLinkedFlagControllerRunPath = z.object({
+    caseFileId: z.string(),
+    requestId: z.string(),
+    documentId: z.string(),
+    signatoryId: z.string()
+});
+
+export const zListSignatoryValidatorsFromDocumentWithLinkedFlagControllerRunQuery = z.object({
+    filter: z.object({
+        search: z.string().optional()
+    }).optional(),
+    page: z.object({
+        number: z.number().gte(1).default(1),
+        size: z.number().gte(0).lte(100).default(20)
+    }).optional()
+});
+
+export const zListSignatoryValidatorsFromDocumentWithLinkedFlagControllerRunResponse = z.object({
+    data: z.array(z.object({
+        id: z.string(),
+        requestId: z.string(),
+        documentId: z.string(),
+        signatoryId: z.string(),
+        firstName: z.string(),
+        lastName: z.string(),
+        email: z.string(),
+        isLinked: z.boolean()
+    })).optional(),
+    meta: z.object({
+        totalElements: z.number().optional()
+    }).optional()
+});
+
+export const zListSignatoryValidatorsWithLinkedFlagControllerRunPath = z.object({
+    caseFileId: z.string(),
+    requestId: z.string(),
+    signatoryId: z.string()
+});
+
+export const zListSignatoryValidatorsWithLinkedFlagControllerRunQuery = z.object({
+    filter: z.object({
+        search: z.string().optional()
+    }).optional(),
+    page: z.object({
+        number: z.number().gte(1).default(1),
+        size: z.number().gte(0).lte(100).default(20)
+    }).optional()
+});
+
+export const zListSignatoryValidatorsWithLinkedFlagControllerRunResponse = z.object({
+    data: z.array(z.object({
+        id: z.string(),
+        requestId: z.string(),
+        firstName: z.string(),
+        lastName: z.string(),
+        email: z.string(),
+        isLinked: z.boolean()
     })).optional(),
     meta: z.object({
         totalElements: z.number().optional()
@@ -2714,6 +2972,14 @@ export const zShowSignatureDocumentDownloadUrlControllerRunPath = z.object({
 
 export const zShowSignatureDocumentDownloadUrlControllerRunResponse = z.object({
     downloadUrl: z.string()
+});
+
+export const zUnlinkSignatoryValidatorFromDocumentControllerRunPath = z.object({
+    caseFileId: z.string(),
+    requestId: z.string(),
+    documentId: z.string(),
+    signatoryId: z.string(),
+    validatorId: z.string()
 });
 
 export const zUpdateDocumentSignatoryControllerRunBody = z.object({
