@@ -14,7 +14,7 @@ const inputSchema = z.object({
 
 export const signature_request_add_document = defineTool({
   name: "signature_request_add_document",
-  description: "Adds a document to a DRAFT signature request. Requires: signature_request_create → requestId, case_file_create → caseFileId. Provide a string `id` for the document. Compute SHA-256 hex hash of the PDF before calling. Returns documentId and url (presigned S3 upload URL) — PUT the PDF bytes to url before adding participants. Cannot add documents after activate_signature_request is called.",
+  description: "Adds a document to a DRAFT signature request. Requires: signature_request_create → requestId, case_file_create → caseFileId. Provide a string `id` for the document. Compute SHA-256 hex hash of the PDF before calling. Returns documentId and url (presigned S3 upload URL) — PUT the PDF bytes to url before adding participants. Cannot add documents after activate_signature_request is called. For CONFIGURABLE sequence: `groupId` must reference a Document type group (not Signatory or DocumentSignatory) — passing a wrong group type returns 'Signature group not found'.",
   inputSchema,
   annotations: {
     destructive: false,
@@ -27,7 +27,7 @@ export const signature_request_add_document = defineTool({
     const token = ctx.auth?.token ?? "";
     const sdkClient = createClient(
       createConfig({
-        baseUrl: process.env.MCP_API_BASE_URL ?? "",
+        baseUrl: process.env.MCP_API_BASE_URL ?? "https://api-eadcustody.eadtrust.gocertius.io",
         headers: {
           Authorization: `Bearer ${token}`,
           ...(ctx.correlationId ? { "X-Correlation-Id": ctx.correlationId } : {}),

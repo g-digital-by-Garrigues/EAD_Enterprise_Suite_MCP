@@ -10,14 +10,20 @@ Always call this first. Authentication is automatic — the server reads credent
 session_login()
 ```
 
-Returns `{ authenticated: true, userId: "<uuid>", ... }`. Save `userId` — you need it to list your case files.
+Returns a session JWT. To get `userId`, call `session_info()` immediately after (no parameters needed — it decodes the JWT):
+
+```
+session_info()  →  { userId: "<uuid>", type: "Password" }
+```
+
+Save `userId` — you need it to list your case files.
 
 ## Step 1 — Find your case file
 
 Every operation in EAD requires a `caseFileId`. Case files are workspaces that group all your documents and processes.
 
 ```
-case_file_list(userId: "<uuid-from-session-login>")
+case_file_list(userId: "<uuid-from-session-info>")
 ```
 
 The response lists your case files. Use the `id` field (a UUID like `822def1b-dab2-496f-83ca-91f7bed2c1ab`), **not** the `code` (like `PR82`).
@@ -60,7 +66,7 @@ node -e "const {randomUUID} = require('crypto'); console.log(randomUUID())"
 | Authenticate | `session_login` |
 | List my case files | `case_file_list` (needs `userId`) |
 | Get a case file's details | `case_file_get` |
-| Start a signature workflow | `signature_request_full_create` (recommended) or see `/signature-lifecycle` |
+| Start a signature workflow | See `/signature-lifecycle` |
 | Certify evidence | See `/evidence-lifecycle` |
 | Send a certified notification | See `/notification-lifecycle` |
 | Create a certified dossier | See `/dossier-lifecycle` |

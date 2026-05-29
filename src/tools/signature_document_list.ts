@@ -14,7 +14,7 @@ const inputSchema = z.object({
 
 export const signature_document_list = defineTool({
   name: "signature_document_list",
-  description: "Lists documents in a signature request with their signing status per document. Requires: signature_request_create → requestId, case_file_create → caseFileId. Returns status per document (PENDING|READY_TO_SIGN|PARTIALLY_SIGNED|SIGNED|REJECTED|ERROR). Poll until the target document status === SIGNED before calling signature_certificate_get.",
+  description: "Lists documents in a signature request with their signing status per document. Requires: signature_request_create → requestId, case_file_create → caseFileId. IMPORTANT: when called with documentId it returns participant signing status (PENDING = not yet signed), NOT document processing status. To check if documents reached READY_TO_SIGN (required before activate_signature_request), use signature_request_get instead. Post-activation: poll until document status === SIGNED before calling signature_certificate_get.",
   inputSchema,
   annotations: {
     destructive: false,
@@ -27,7 +27,7 @@ export const signature_document_list = defineTool({
     const token = ctx.auth?.token ?? "";
     const sdkClient = createClient(
       createConfig({
-        baseUrl: process.env.MCP_API_BASE_URL ?? "",
+        baseUrl: process.env.MCP_API_BASE_URL ?? "https://api-eadcustody.eadtrust.gocertius.io",
         headers: {
           Authorization: `Bearer ${token}`,
           ...(ctx.correlationId ? { "X-Correlation-Id": ctx.correlationId } : {}),
