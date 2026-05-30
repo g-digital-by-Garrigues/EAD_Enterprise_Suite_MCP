@@ -1,24 +1,26 @@
-FROM node:22-slim AS base
+FROM node:22-alpine AS base
 WORKDIR /app
-
-# Install pnpm via corepack
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
-FROM base AS deps
-COPY package.json pnpm-lock.yaml* ./
-RUN pnpm install --frozen-lockfile --prod
 
 FROM base AS build
+COPY package.json package-lock.json ./
+RUN npm ci
 COPY . .
-RUN pnpm install --frozen-lockfile
-RUN pnpm build
+RUN npm run build
 
-FROM node:22-slim AS runner
+FROM base AS deps
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev && npm cache clean --force
+
+FROM node:22-alpine AS runner
 WORKDIR /app
 
-# Create non-root user
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 mcpuser
+# Patch OS packages to fix CVEs disclosed after the base image was built.
+RUN apk update && apk upgrade --no-cache
+
+# Update bundled npm so its transitive deps are at patched versions.
+RUN npm install -g npm@latest && npm cache clean --force
+
+RUN addgroup -S nodejs && adduser -S mcpuser -G nodejs
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
