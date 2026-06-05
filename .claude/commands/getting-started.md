@@ -28,7 +28,7 @@ case_file_list(userId: "<uuid-from-session-info>")
 
 The response lists your case files. Use the `id` field (a UUID like `822def1b-dab2-496f-83ca-91f7bed2c1ab`), **not** the `code` (like `PR82`).
 
-> Case files are created in the EAD portal — they cannot be created via MCP. If you have no case file, contact your EAD administrator.
+> If you have no case file yet, create one with `case_file_create` (generate a UUID v4 for `id`, provide a `name`, and supply the `useCaseId` from `use_case_list`). Some use case types allow only one case file per user — if you get `personalCaseFileAlreadyExists`, use your existing case file instead.
 
 ## Step 2 — Generate valid UUIDs
 
