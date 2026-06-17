@@ -52,6 +52,7 @@ import { signature_coordinate_set } from "./tools/signature_coordinate_set.js";
 import { signature_certificate_get } from "./tools/signature_certificate_get.js";
 import { large_evidence_upload_initiate } from "./tools/large_evidence_upload_initiate.js";
 import { large_evidence_upload_complete } from "./tools/large_evidence_upload_complete.js";
+import { evidence_upload } from "./tools/evidence_upload.js";
 
 await createServer({
   name: "io.github.g-digital-by-Garrigues/ead-enterprise-suite",
@@ -107,5 +108,6 @@ signature_coordinate_set,
 signature_certificate_get,
 large_evidence_upload_initiate,
 large_evidence_upload_complete,
+evidence_upload,
   ],
 });

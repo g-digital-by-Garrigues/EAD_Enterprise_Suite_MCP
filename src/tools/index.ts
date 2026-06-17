@@ -49,3 +49,4 @@ export { signature_coordinate_set } from "./signature_coordinate_set.js";
 export { signature_certificate_get } from "./signature_certificate_get.js";
 export { large_evidence_upload_initiate } from "./large_evidence_upload_initiate.js";
 export { large_evidence_upload_complete } from "./large_evidence_upload_complete.js";
+export { evidence_upload } from "./evidence_upload.js";

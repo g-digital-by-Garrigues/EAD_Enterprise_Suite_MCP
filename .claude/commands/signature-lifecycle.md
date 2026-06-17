@@ -11,7 +11,10 @@ Use the individual tools when you need custom control over each step.
 - **Signature types**: `INTERPOSITION` (electronic, placement box) or `ADVANCED` (qualified, requires a digital certificate from the signer).
 - **Close condition**: `ALL_REQUIRED` (everyone must sign) or `PARTIAL_ALLOWED` (first signer closes it).
 - **Sequence**: `PARALLEL` (all sign simultaneously) or `CONFIGURABLE` (ordered signing).
-- **WhatsApp** (`sendWaUrl: true`): Only supported for `INTERPOSITION` type.
+- **WhatsApp/simple signing link**: currently only supported for `INTERPOSITION`
+  (simple signature). `ADVANCED` does not currently support WhatsApp delivery.
+- **Advanced OTP**: `ADVANCED` signatures require `phonePrefix` and
+  `phoneNumber`; the signer receives the OTP through that phone channel.
 - **Document states**: DRAFT → processing → `READY_TO_SIGN`. Must be `READY_TO_SIGN` before activation.
 - **Coordinates**: Required for **all** signature types (both `INTERPOSITION` and `ADVANCED`). Set before activation via `signature_coordinate_set`.
 
@@ -84,6 +87,12 @@ signature_participant_create(
 Call `signature_request_get(caseFileId, requestId)` and inspect the document statuses. Alternatively verify with the API directly. Typically 15–60 seconds for files under 4 MB.
 
 **Do not activate before documents are processed — the API will return an error.**
+Activation requires all of these to be true:
+
+- at least one `SIGNATORY` exists,
+- all documents have been uploaded to their presigned URLs,
+- every uploaded document has finished backend processing and is `READY_TO_SIGN`,
+- every PDF has signature coordinates for the required signatories.
 
 > Note: `signature_document_list` with a `documentId` returns **participant signing status**, not document processing status. Use `signature_request_get` to check if documents have reached `READY_TO_SIGN`.
 
@@ -124,7 +133,7 @@ Transitions to `ACTIVE` and sends signing invitations to all participants.
 | Skip `signature_coordinate_set` for `ADVANCED` type | `activate_signature_request` fails — coordinates required for all types | Always call `signature_coordinate_set` before activating, regardless of type |
 | Use the S3 resource UUID as `documentId` | Tool call fails (wrong ID) | Use the `id` you passed to `signature_request_add_document`, not the UUID in the S3 URL |
 | Add participant with `ADVANCED` type but no phone | API rejects with `isDefined` on `phoneNumber`/`phonePrefix` | Always supply `phoneNumber` + `phonePrefix` for ADVANCED signatories |
-| `activate_signature_request` before documents reach `READY_TO_SIGN` | API error | Poll `signature_document_list` until status is `READY_TO_SIGN` |
+| `activate_signature_request` before documents reach `READY_TO_SIGN` | API error | Poll `signature_request_get` until uploaded documents are processed/READY_TO_SIGN |
 
 ## Cancel a request
 
