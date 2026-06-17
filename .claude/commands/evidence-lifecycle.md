@@ -46,6 +46,8 @@ evidence_create(
 
 Returns `{ uploadFileUrl: "<presigned-s3-url>", ... }`.
 
+> **Shortcut for local files — `evidence_upload`:** instead of hashing + `evidence_create` + manual PUT, call `evidence_upload` with the local file (`filePath` in stdio mode, or `contentBase64`) plus `caseFileId`, `evidenceGroupId`, `title`, `fileName`. It computes the SHA-256, registers the evidence, and uploads the bytes in one step. (`filePath` is rejected in HTTP mode — use `contentBase64` there.)
+
 ### Step 3 — Upload the file
 
 ```

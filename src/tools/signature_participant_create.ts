@@ -14,12 +14,14 @@ const inputSchema = z.object({
 
 export const signature_participant_create = defineTool({
   name: "signature_participant_create",
-  description: "Adds a participant (signatory, observer, or validator) to a document in a DRAFT signature request. Requires: signature_request_add_document → documentId + file uploaded to S3, signature_request_create → requestId, case_file_create → caseFileId. Use role SIGNATORY for required signers, OBSERVER for read-only, VALIDATOR for approvers. For ADVANCED type: phonePrefix and phoneNumber are required. For INTERPOSITION type: phone is optional. Returns signatoryId. Add at least one SIGNATORY before activating. For VALIDATOR role: do NOT include groupId or linkToAllDocuments — use assign_validator_to_signatory to link the validator to a specific signatory after creation.",
+  description: "Adds a participant (signatory, observer, or validator) to a DRAFT signature request. Requires: signature_request_add_document → documentId + file uploaded to S3, signature_request_create → requestId, case_file_create → caseFileId. Use role SIGNATORY for required signers, OBSERVER for read-only, VALIDATOR for approvers. For ADVANCED signatures, phonePrefix and phoneNumber are mandatory because the signer receives the OTP there; WhatsApp delivery is NOT currently supported for ADVANCED. For INTERPOSITION signatures, phone is optional, and WhatsApp sending is currently available only for this simple/interposition flow when the platform is configured to send a WhatsApp signing link. Returns signatoryId. Add at least one SIGNATORY before activating. For VALIDATOR role: do NOT include groupId or linkToAllDocuments — use assign_validator_to_signatory to link the validator to a specific signatory after creation.",
   inputSchema,
   annotations: {
-    destructive: false,
-    idempotent: false,
-    requiresUserConfirmation: false,
+    title: "Signature Participant Create",
+    readOnlyHint: false,
+    destructiveHint: false,
+    idempotentHint: false,
+    openWorldHint: false,
   },
   pollable: false,
   idempotencyWindowSeconds: 60,

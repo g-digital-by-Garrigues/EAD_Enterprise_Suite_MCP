@@ -12,12 +12,14 @@ const inputSchema = z.object({
 
 export const activate_signature_request = defineTool({
   name: "activate_signature_request",
-  description: "Activates a signature request, transitioning from DRAFT to ACTIVE and sending notifications to all signatories. Requires: signature_request_create → requestId (DRAFT), at least one SIGNATORY added, all documents uploaded and coordinates set, case_file_create → caseFileId. IRREVERSIBLE: cannot add documents or participants after activation. ASYNC: poll signature_document_list until document status === SIGNED.",
+  description: "Activates a signature request, transitioning from DRAFT to ACTIVE and sending signing invitations to all signatories. Do NOT call this immediately after uploading files. Activation preconditions: request is DRAFT; at least one SIGNATORY exists; every document has been uploaded to its presigned URL; backend processing has had time to complete for every uploaded document (use processed/READY_TO_SIGN from signature_request_get when exposed; otherwise wait after the successful PUT); and PDF documents have signature coordinates set for every required signatory. INTERPOSITION may send a simple signing link, including WhatsApp when available/configured; ADVANCED uses phonePrefix/phoneNumber for OTP and currently does not support WhatsApp delivery. IRREVERSIBLE: cannot add documents or participants after activation. ASYNC: after activation, poll signature_request_get until status is ACTIVE, then use signature_document_list with documentId to monitor signing; call signature_certificate_get only after the document is SIGNED.",
   inputSchema,
   annotations: {
-    destructive: false,
-    idempotent: false,
-    requiresUserConfirmation: false,
+    title: "Activate Signature Request",
+    readOnlyHint: false,
+    destructiveHint: false,
+    idempotentHint: false,
+    openWorldHint: false,
   },
   pollable: false,
   idempotencyWindowSeconds: 60,
