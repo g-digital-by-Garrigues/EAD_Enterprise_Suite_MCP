@@ -27,33 +27,61 @@ export const signature_request_add_document = defineTool({
   inputSchema: z.object({
     caseFileId: z.string().describe("UUID of the case file"),
     requestId: z.string().describe("UUID of the signature request (DRAFT)"),
-    id: z.string().describe("UUID for the document — becomes documentId for coordinate_set and certificate_get"),
+    id: z
+      .string()
+      .describe(
+        "UUID for the document — becomes documentId for coordinate_set and certificate_get",
+      ),
     title: z.string().describe("Document title shown to signatories"),
     fileName: z.string().describe("File name including extension (e.g. contract.pdf)"),
     hash: z.string().describe("SHA-256 hex digest of the PDF content (64 hex chars)"),
     fileSize: z.number().optional().describe("File size in bytes (optional)"),
-    groupId: z.string().optional().describe("For CONFIGURABLE sequence: ID of a Document type group"),
+    groupId: z
+      .string()
+      .optional()
+      .describe("For CONFIGURABLE sequence: ID of a Document type group"),
     convertToPdf: z.boolean().optional().describe("Convert non-PDF to PDF before processing"),
-    fileUrl: z.string().url().optional()
-      .describe("Optional public URL to download and auto-upload the PDF to S3. Eliminates the manual PUT step."),
+    fileUrl: z
+      .string()
+      .url()
+      .optional()
+      .describe(
+        "Optional public URL to download and auto-upload the PDF to S3. Eliminates the manual PUT step.",
+      ),
   }),
-  annotations: { destructive: false, idempotent: true, requiresUserConfirmation: false },
+  annotations: {
+    title: "Signature Request Add Document",
+    readOnlyHint: false,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false,
+  },
   pollable: false,
   idempotencyWindowSeconds: 60,
   async execute(input, ctx) {
-    const { caseFileId, requestId, id, title, fileName, hash, fileSize, groupId, convertToPdf, fileUrl } =
-      input as {
-        caseFileId: string;
-        requestId: string;
-        id: string;
-        title: string;
-        fileName: string;
-        hash: string;
-        fileSize?: number;
-        groupId?: string;
-        convertToPdf?: boolean;
-        fileUrl?: string;
-      };
+    const {
+      caseFileId,
+      requestId,
+      id,
+      title,
+      fileName,
+      hash,
+      fileSize,
+      groupId,
+      convertToPdf,
+      fileUrl,
+    } = input as {
+      caseFileId: string;
+      requestId: string;
+      id: string;
+      title: string;
+      fileName: string;
+      hash: string;
+      fileSize?: number;
+      groupId?: string;
+      convertToPdf?: boolean;
+      fileUrl?: string;
+    };
 
     const token = ctx.auth?.token ?? "";
     const sdkClient = createClient(
@@ -88,7 +116,9 @@ export const signature_request_add_document = defineTool({
     if (fileUrl && presignedUrl) {
       const fileResponse = await fetch(fileUrl);
       if (!fileResponse.ok) {
-        throw new Error(`signature_request_add_document: failed to download fileUrl (HTTP ${fileResponse.status})`);
+        throw new Error(
+          `signature_request_add_document: failed to download fileUrl (HTTP ${fileResponse.status})`,
+        );
       }
       const fileBuffer = Buffer.from(await fileResponse.arrayBuffer());
       const hashB64 = createHash("sha256").update(fileBuffer).digest("base64");
@@ -103,7 +133,9 @@ export const signature_request_add_document = defineTool({
       });
 
       if (!uploadResponse.ok) {
-        throw new Error(`signature_request_add_document: S3 upload failed (HTTP ${uploadResponse.status})`);
+        throw new Error(
+          `signature_request_add_document: S3 upload failed (HTTP ${uploadResponse.status})`,
+        );
       }
 
       return { documentId: id, uploaded: true };

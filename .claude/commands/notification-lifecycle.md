@@ -19,7 +19,8 @@ The notification stays in `DRAFT` until explicitly sent via `notification_reques
 ## Flow
 
 1. **Create the notification request** (stays DRAFT)
-   - `notification_request_create` with a generated UUID `id`, `caseFileId`, `type`, `subject`, `content`, `language`
+   - `notification_request_create` with a generated UUID `id`, `caseFileId`, `type`, `subject`, `content`, `language
+   - **IMPORTANT — `content` must be valid HTML.** Plain text without HTML tags will not render on the recipient landing page. Supported tags only: `<p>`, `<strong>`, `<em>`, `<ul><li>`, `<ol><li>`. No other HTML tags or CSS.`
    - Optional: `otpByDefault: true` to require SMS OTP for all recipients
    - Optional: `useCaseId` to associate a use case template for workflow configuration
 
@@ -42,9 +43,17 @@ The notification stays in `DRAFT` until explicitly sent via `notification_reques
    | Claude Code / n8n (standard `callTool`) | Poll `notification_request_status` until `status: SENT` or beyond (`PARTIALLY_READ`, `FULLY_READ`, `PARTIALLY_ANSWERED`, `FULLY_ANSWERED`) |
    | Task-capable MCP client (experimental task streaming) | Server pushes completion via SSE when notification is sent — no polling needed |
 
-5. **Generate per-receiver certificates** (once SENT or later)
+5. **Generate per-receiver certificates** (once the notification is certifiable)
    - `notification_certificate_get` with a generated UUID `id`, `caseFileId`, `notificationRequestId`, `receiverId`, `language`
-   - Creates an intermediate certificate immediately after sending; re-call after `FULLY_ANSWERED` for the final certificate
+   - For simple delivery evidence, start after `SENT` only if the platform already exposes evidence/certificate data. For notification types that expect recipient action, prefer `PARTIALLY_READ`/`FULLY_READ` or `PARTIALLY_ANSWERED`/`FULLY_ANSWERED`.
+   - Re-call after `FULLY_ANSWERED` for the final answer certificate.
+   - The first call can return `{}` while generation is queued. Reuse the same
+     certificate `id` and poll/re-call until the response includes a PDF URL or
+     final certificate status.
+   - If the endpoint returns `Forbidden` or `{ "code": "Unexpected", "id": ... }`,
+     stop polling `notification_certificate_get`; poll `notification_request_status`
+     until the notification progresses or verify the evidence in the UI, then
+     retry with the same certificate id.
 
 ## Example
 
@@ -54,7 +63,7 @@ The notification stays in `DRAFT` until explicitly sent via `notification_reques
 notification_request_create
   id=<uuid>  caseFileId=<cf-id>
   type=NO_RESPONSE  subject="Your contract is ready"
-  content="Please review the attached information."  language=en_GB
+  content="<p>Please review the attached information.</p>"  language=en_GB
 
 notification_receiver_add
   id=<uuid>  caseFileId=<cf-id>  notificationRequestId=<notif-id>
@@ -79,5 +88,7 @@ notification_certificate_get
 |---|---|---|
 | Forget `notification_request_send` | Notification stays DRAFT forever | Always call send after adding recipients |
 | Call `notification_certificate_get` before send | Certificate generation may fail — notification not sent yet | Send first, then generate the certificate |
+| Poll certificate after `SENT` despite `Forbidden` / `Unexpected` | Repeated backend errors, no PDF | Poll notification status until read/answered or UI evidence exists, then retry same certificate id |
 | Missing `caseFileId` in receiver add | 404 or routing error | Always pass `caseFileId` alongside `notificationRequestId` |
 | `otpByDefault: true` without phone number | Recipient cannot pass OTP challenge | Set `phoneNumber` + `phonePrefix` on each receiver when OTP is required |
+| Plain text in `content` (no HTML tags) | Content does not render on recipient landing page | Wrap in HTML: `<p>Your text.</p>`. Supported: `<p>`, `<strong>`, `<em>`, `<ul><li>`, `<ol><li>` |

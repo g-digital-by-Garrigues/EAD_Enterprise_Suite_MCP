@@ -14,12 +14,14 @@ const inputSchema = z.object({
 
 export const signature_coordinate_set = defineTool({
   name: "signature_coordinate_set",
-  description: "Sets the visual position of the signature field on a document page. Requires: signature_participant_create → signatoryId, signature_request_add_document → documentId, signature_request_create → requestId, case_file_create → caseFileId. Provide coordinates as array of {page (1-based), x (points from left), y (points from bottom)}. Required for all signature types (INTERPOSITION and ADVANCED) before activation.",
+  description: "Sets the visual position of the signature field on a PDF document page. Required for PDF documents before activation, for both INTERPOSITION and ADVANCED signatures. Requires: signature_participant_create → signatoryId, signature_request_add_document → documentId, signature_request_create → requestId, case_file_create → caseFileId. Provide coordinates as array of {page (1-based), x (points from left), y (points from bottom)}. Set coordinates after the document has been uploaded and before activate_signature_request.",
   inputSchema,
   annotations: {
-    destructive: false,
-    idempotent: false,
-    requiresUserConfirmation: false,
+    title: "Signature Coordinate Set",
+    readOnlyHint: false,
+    destructiveHint: false,
+    idempotentHint: false,
+    openWorldHint: false,
   },
   pollable: false,
   idempotencyWindowSeconds: 60,
