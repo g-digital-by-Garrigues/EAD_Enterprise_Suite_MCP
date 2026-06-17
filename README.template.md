@@ -6,7 +6,7 @@
 [![provenance](https://img.shields.io/badge/npm-provenance-green)](https://www.npmjs.com/package/@g-digital/mcp-ead-enterprise-suite)
 [![smithery badge](https://smithery.ai/badge/g-digital/ead-enterprise-suite)](https://smithery.ai/servers/g-digital/ead-enterprise-suite)
 
-MCP server for EAD Enterprise Suite, EAD Trust's advanced Digital Trust platform. Full signature workflows, certified evidence, notifications, dossiers, and large-file uploads for enterprise legal processes.
+MCP server for EAD Enterprise Suite - signatures, evidence, notifications, dossiers via AI agents.
 
 ## Quick start
 
