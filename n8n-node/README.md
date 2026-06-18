@@ -1,8 +1,8 @@
-# Ead Enterprise Suite — n8n connector
+# EAD Enterprise Suite — n8n connector
 
 > MCP server for EAD Enterprise Suite - signatures, evidence, notifications, dossiers via AI agents.
 
-Install this connector and use Ead Enterprise Suite operations as steps inside any n8n workflow. Each operation maps to one capability of the underlying Ead Enterprise Suite platform.
+Install this connector and use EAD Enterprise Suite operations as steps inside any n8n workflow. Each operation maps to one capability of the underlying EAD Enterprise Suite platform.
 
 ## Install (self-hosted n8n)
 
@@ -10,11 +10,11 @@ Install this connector and use Ead Enterprise Suite operations as steps inside a
 npm install @g-digital/n8n-nodes-ead-enterprise-suite
 ```
 
-Then restart n8n. The node will appear in the Nodes panel under "Ead Enterprise Suite".
+Then restart n8n. The node will appear in the Nodes panel under "EAD Enterprise Suite".
 
 ## Using with n8n AI Agent
 
-For AI-driven automation, configure an **n8n AI Agent node** with the following system prompt. It covers all lifecycle workflows: evidence creation, certified notifications, signature processes, dossier certification, and certified chats.
+For AI-driven automation, configure an **n8n AI Agent node** with the following system prompt. It covers all lifecycle workflows: evidence creation, certified notifications, signature processes, dossier certification.
 
 **→ Full system prompt and workflow guide:** [`@g-digital/n8n-agent-system-prompt`](https://www.npmjs.com/package/@g-digital/mcp-gocertius) — see the `docs/n8n-agent-workflows/gocertius-ead-system-prompt.md` in [MCP_Market_Distribution](https://github.com/g-digital-by-Garrigues/MCP_Market_Distribution/blob/main/docs/n8n-agent-workflows/gocertius-ead-system-prompt.md).
 
@@ -23,10 +23,10 @@ For AI-driven automation, configure an **n8n AI Agent node** with the following 
 Paste this into your AI Agent node's **System Message**:
 
 ```
-You are a Digital Trust assistant using the Ead Enterprise Suite n8n connector.
+You are a Digital Trust assistant using the EAD Enterprise Suite n8n connector.
 UUID generation: generate UUID v4 for all `id` fields you must supply.
 IDs from responses: never invent path parameters — always use values returned by previous tool calls.
-Async operations: after evidence_seal, dossier_certify, signature activation, and chat certification — poll the corresponding list/status tool until the terminal state is reached before proceeding.
+Async operations: after evidence_seal, dossier_certify, signature activation — poll the corresponding list/status tool until the terminal state is reached before proceeding.
 File uploads: when a tool returns uploadFileUrl or url, PUT the file bytes there with a separate HTTP Request node before calling the next step.
 See the full lifecycle guide at: https://github.com/g-digital-by-Garrigues/MCP_Market_Distribution/blob/main/docs/n8n-agent-workflows/gocertius-ead-system-prompt.md
 ```
@@ -88,18 +88,13 @@ See the full lifecycle guide at: https://github.com/g-digital-by-Garrigues/MCP_M
 
 ## Credentials
 
-This node requires a "Ead Enterprise Suite API" credential with the following fields:
+This node requires a "EAD Enterprise Suite API" credential with the following fields:
 
 | Field | Description | Secret? |
 |---|---|---|
-| `API Base URL` | Base URL of the Ead Enterprise Suite REST API. Production default: `https://api-eadcustody.eadtrust.gocertius.io` Leave blank only if you know your environment uses a different endpoint. | no |
-| `MCP_ALLOW_INSECURE_FILE_URL` | Set to "true" to allow plain http:// fileUrl downloads in evidence_create (default https-only). Private/internal addresses are always rejected regardless. | no |
-| `MCP_ALLOWED_HOSTS` | Comma-separated allowed Host headers. Empty = Host validation disabled (default). When set, requests with a Host outside the list are rejected. | no |
-| `MCP_ALLOWED_ORIGINS` | Comma-separated allowed browser Origins (DNS-rebinding defense). Empty = reject any request carrying an Origin header; non-browser clients (CLI/SDK) send no Origin and are always allowed. Use '*' to allow all. | no |
+| `API Base URL` | Base URL of the EAD Enterprise Suite REST API. Production default: `https://api-eadcustody.eadtrust.gocertius.io` Leave blank only if you know your environment uses a different endpoint. | no |
 | `MCP_AUTH_EMAIL` | Your EAD Enterprise Suite account email (Flow 1). Configure one of Flow 1 or Flow 2. | no |
 | `MCP_AUTH_PASSWORD` | Your EAD Enterprise Suite account password (Flow 1, email/password accounts) (See https://www.eadtrust.eu/soluciones-legaltech/enterprise-suite/ for credential acquisition.) | yes |
-| `MCP_HTTP_HOST` | Interface the HTTP transport binds to. Default 127.0.0.1 (localhost only). Set 0.0.0.0 to expose on all interfaces (containers do this automatically). | no |
-| `MCP_HTTP_PUBLIC` | Set to "true" for public/multi-tenant deployments. Activates Host validation and refuses to start unless MCP_ALLOWED_ORIGINS or MCP_ALLOWED_HOSTS is set (fail-closed). | no |
 > **Need credentials?** Sign up or log in at [https://www.eadtrust.eu/soluciones-legaltech/enterprise-suite/](https://www.eadtrust.eu/soluciones-legaltech/enterprise-suite/).
 
 ## Use as an AI Agent tool
