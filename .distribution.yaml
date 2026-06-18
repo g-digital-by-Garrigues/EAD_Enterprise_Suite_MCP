@@ -10,6 +10,7 @@ npm_scope: "@g-digital"
 npm_package_name: "@g-digital/mcp-ead-enterprise-suite"
 docker_image_name: gdigital/ead-enterprise-suite
 n8n_adapter_target_name: n8n-nodes-ead-enterprise-suite
+n8n_connector_display_name: "EAD Enterprise Suite"
 
 # Branding & metadata
 license: MIT
