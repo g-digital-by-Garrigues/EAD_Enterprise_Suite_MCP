@@ -1,6 +1,6 @@
 {
   "name": "@g-digital/n8n-nodes-ead-enterprise-suite",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "MCP server for EAD Enterprise Suite - signatures, evidence, notifications, dossiers via AI agents.",
   "license": "MIT",
   "homepage": "https://github.com/g-digital-by-Garrigues/EAD_Enterprise_Suite_MCP",
