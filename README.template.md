@@ -72,9 +72,7 @@ docker run --rm -i \
 |---|---|---|
 | `MCP_AUTH_EMAIL` | One of flow 1 or 2 | Your account email |
 | `MCP_AUTH_PASSWORD` | One of flow 1 or 2 | Your account password |
-| `MCP_OPENID_ISSUER` | One of flow 1 or 2 | OpenID Connect issuer URL |
-| `MCP_OPENID_CLIENT_ID` | One of flow 1 or 2 | OpenID Connect client ID |
-| `MCP_OPENID_REFRESH_TOKEN` | One of flow 1 or 2 | OpenID Connect refresh token |
+| `MCP_AUTH_USER_KEY` | One of flow 1 or 2 | Long-lived user key (exchanged for a session token) |
 | `MCP_AUTH_JWT` | Optional | Pre-seeded JWT (skips interactive login) |
 | `MCP_OTEL_ENABLED` | Optional | Set to `true` to enable OpenTelemetry tracing |
 | `MCP_API_BASE_URL` | Optional | Override upstream API base URL |
@@ -129,7 +127,7 @@ This server exposes **51 tools**:
 | `case_file_create` | Creates a new case file — the top-level container for all related operations (evidence, notifications, signatures, dossiers). Call this first before any other operation. Generate a UUID v4 for `id`. Returns caseFileId needed for all subsequent calls. |
 | `case_file_list` | Lists all case files in your EAD Enterprise Suite account. Pass userId (from session_login or session_info) to scope results to your account. Returns paginated list with IDs, names, and status. |
 | `case_file_get` | Retrieves details of a specific case file. Requires: caseFileId. Use to verify a case file exists before creating evidence groups, dossiers, or signature requests. |
-| `session_login` | Authenticates with EAD Enterprise Suite to obtain a session JWT. Takes NO parameters — credentials are read from the server environment (MCP_AUTH_EMAIL plus MCP_AUTH_PASSWORD, or the OpenID Connect variables). For OpenID accounts this starts an Azure AD device flow: the first call returns a browser link + code to approve in Microsoft Authenticator, then call again to finish. The MCP server manages authentication automatically; call this only if you hit 401 errors. |
+| `session_login` | Authenticates with EAD Enterprise Suite to obtain a session JWT. Takes NO parameters — credentials are read from the server environment: MCP_AUTH_USER_KEY (a long-lived user key, exchanged automatically for a session token) or MCP_AUTH_EMAIL plus MCP_AUTH_PASSWORD. The MCP server manages authentication automatically; call this only if you hit 401 errors. |
 | `session_info` | Retrieves information about the current authenticated session including userId, account, and token expiry. No required parameters. |
 | `use_case_list` | Lists available use cases for the account. Use cases define the allowed signature workflows and document types. Returns useCaseId values needed for signature_request_create. |
 | `signature_group_create` | Creates a signing order group for a CONFIGURABLE signature request. Types: 'Document' (groups documents into signing rounds — use its id as groupId in signature_request_add_document), 'Signatory' (groups signatories into signing rounds — use its id as groupId in signature_participant_create), 'DocumentSignatory' (links a specific document to a signing round, requires documentId). IMPORTANT — avoid empty groups: when a CONFIGURABLE request is created, the API automatically pre-creates one Document group and one Signatory group both at index:1. Always use these pre-existing index:1 groups for your first document and first signatory (retrieve their IDs with signature_group_list immediately after creating the request). Only call signature_group_create for the ADDITIONAL groups (index:2, 3…). Add participants with linkToAllDocuments:true so DocumentSignatory groups are auto-generated at the correct index. Adding participants without linkToAllDocuments leaves them unlinked to documents and signature_coordinate_set will fail with 'Signatory not found'. |
