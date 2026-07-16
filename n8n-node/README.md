@@ -93,8 +93,10 @@ This node requires a "EAD Enterprise Suite API" credential with the following fi
 | Field | Description | Secret? |
 |---|---|---|
 | `API Base URL` | Base URL of the EAD Enterprise Suite REST API. Production default: `https://api-eadcustody.eadtrust.gocertius.io` Leave blank only if you know your environment uses a different endpoint. | no |
-| `MCP_AUTH_EMAIL` | Your EAD Enterprise Suite account email (Flow 1). Configure one of Flow 1 or Flow 2. | no |
-| `MCP_AUTH_PASSWORD` | Your EAD Enterprise Suite account password (Flow 1, email/password accounts) (See https://www.eadtrust.eu/soluciones-legaltech/enterprise-suite/ for credential acquisition.) | yes |
+| `MCP_SVC_TOKEN_URL` | Token endpoint URL for the OAuth2 client_credentials flow (Flow 3) | no |
+| `MCP_SVC_CLIENT_ID` | OAuth2 client_credentials client ID (Flow 3) | no |
+| `MCP_SVC_CLIENT_SECRET` | OAuth2 client_credentials client secret (Flow 3) (See https://www.eadtrust.eu/soluciones-legaltech/enterprise-suite/ for credential acquisition.) | yes |
+| `MCP_SVC_SCOPE` | Optional OAuth2 scope for the service-account token request (Flow 3) | no |
 > **Need credentials?** Sign up or log in at [https://www.eadtrust.eu/soluciones-legaltech/enterprise-suite/](https://www.eadtrust.eu/soluciones-legaltech/enterprise-suite/).
 
 ## Use as an AI Agent tool
