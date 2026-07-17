@@ -1,5 +1,5 @@
 {
-  "node": "@g-digital/n8n-nodes-ead-enterprise-suite",
+  "node": "@g-digital/n8n-nodes-ead-enterprise-suite.eadEnterpriseSuite",
   "nodeVersion": "1.0",
   "codexVersion": "1.0",
   "categories": ["Utility"],
