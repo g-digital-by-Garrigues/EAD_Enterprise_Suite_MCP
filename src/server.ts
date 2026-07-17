@@ -36,6 +36,7 @@ import { case_file_list } from "./tools/case_file_list.js";
 import { case_file_get } from "./tools/case_file_get.js";
 import { session_login } from "./tools/session_login.js";
 import { session_info } from "./tools/session_info.js";
+import { profile_get } from "./tools/profile_get.js";
 import { use_case_list } from "./tools/use_case_list.js";
 import { signature_group_create } from "./tools/signature_group_create.js";
 import { signature_group_list } from "./tools/signature_group_list.js";
@@ -92,6 +93,7 @@ case_file_list,
 case_file_get,
 session_login,
 session_info,
+profile_get,
 use_case_list,
 signature_group_create,
 signature_group_list,

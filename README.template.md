@@ -70,9 +70,9 @@ docker run --rm -i \
 
 | Variable | Required | Description |
 |---|---|---|
-| `MCP_AUTH_EMAIL` | One of flow 1 or 2 | Your account email |
-| `MCP_AUTH_PASSWORD` | One of flow 1 or 2 | Your account password |
-| `MCP_AUTH_USER_KEY` | One of flow 1 or 2 | Long-lived user key (exchanged for a session token) |
+| `MCP_AUTH_EMAIL` | One of the two flows | Your account email |
+| `MCP_AUTH_PASSWORD` | One of the two flows | Your account password |
+| `MCP_AUTH_USER_KEY` | One of the two flows | Long-lived user key (exchanged for a session token) |
 | `MCP_AUTH_JWT` | Optional | Pre-seeded JWT (skips interactive login) |
 | `MCP_OTEL_ENABLED` | Optional | Set to `true` to enable OpenTelemetry tracing |
 | `MCP_API_BASE_URL` | Optional | Override upstream API base URL |
@@ -91,7 +91,7 @@ See [docs/agent-prompts.md](docs/agent-prompts.md) for end-to-end prompt example
 
 ## Available Tools
 
-This server exposes **51 tools**:
+This server exposes **52 tools**:
 
 | Tool | Description |
 |------|-------------|
@@ -128,7 +128,8 @@ This server exposes **51 tools**:
 | `case_file_list` | Lists all case files in your EAD Enterprise Suite account. Pass userId (from session_login or session_info) to scope results to your account. Returns paginated list with IDs, names, and status. |
 | `case_file_get` | Retrieves details of a specific case file. Requires: caseFileId. Use to verify a case file exists before creating evidence groups, dossiers, or signature requests. |
 | `session_login` | Authenticates with EAD Enterprise Suite to obtain a session JWT. Takes NO parameters — credentials are read from the server environment: MCP_AUTH_USER_KEY (a long-lived user key, exchanged automatically for a session token) or MCP_AUTH_EMAIL plus MCP_AUTH_PASSWORD. The MCP server manages authentication automatically; call this only if you hit 401 errors. |
-| `session_info` | Retrieves information about the current authenticated session including userId, account, and token expiry. No required parameters. |
+| `session_info` | Retrieves information about the current authenticated session including userId, account, and token expiry. Works on both auth flows: on a user-key deployment (MCP_AUTH_USER_KEY, no email configured) it resolves identity via GET /profile; with MCP_AUTH_EMAIL it queries /session-info. If you only need the userId, prefer profile_get — it is the canonical source (`id`) and also returns companyId and defaultCaseFileId. No required parameters. |
+| `profile_get` | Returns the authenticated user's own profile. Works on EVERY auth flow (user key or email/password) because it identifies the caller from the session token alone — no email needed. Its `id` field IS your userId (UUID): the value required by case_file_list and every /users/{userId}/... operation. Prefer this over session_info when you need the userId, and it is the ONLY way to obtain it on a user-key deployment (MCP_AUTH_USER_KEY), where no email is configured. Also returns companyId (needed to subscribe to the notifications SSE stream) and defaultCaseFileId. No parameters. |
 | `use_case_list` | Lists available use cases for the account. Use cases define the allowed signature workflows and document types. Returns useCaseId values needed for signature_request_create. |
 | `signature_group_create` | Creates a signing order group for a CONFIGURABLE signature request. Types: 'Document' (groups documents into signing rounds — use its id as groupId in signature_request_add_document), 'Signatory' (groups signatories into signing rounds — use its id as groupId in signature_participant_create), 'DocumentSignatory' (links a specific document to a signing round, requires documentId). IMPORTANT — avoid empty groups: when a CONFIGURABLE request is created, the API automatically pre-creates one Document group and one Signatory group both at index:1. Always use these pre-existing index:1 groups for your first document and first signatory (retrieve their IDs with signature_group_list immediately after creating the request). Only call signature_group_create for the ADDITIONAL groups (index:2, 3…). Add participants with linkToAllDocuments:true so DocumentSignatory groups are auto-generated at the correct index. Adding participants without linkToAllDocuments leaves them unlinked to documents and signature_coordinate_set will fail with 'Signatory not found'. |
 | `signature_group_list` | Lists all signing order groups of a CONFIGURABLE signature request. Returns id, type (Document/Signatory/DocumentSignatory), index, and documentId for each group. Call immediately after signature_request_create to retrieve the pre-created index:1 group IDs before adding documents or participants. |

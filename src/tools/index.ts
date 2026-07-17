@@ -33,6 +33,7 @@ export { case_file_list } from "./case_file_list.js";
 export { case_file_get } from "./case_file_get.js";
 export { session_login } from "./session_login.js";
 export { session_info } from "./session_info.js";
+export { profile_get } from "./profile_get.js";
 export { use_case_list } from "./use_case_list.js";
 export { signature_group_create } from "./signature_group_create.js";
 export { signature_group_list } from "./signature_group_list.js";
