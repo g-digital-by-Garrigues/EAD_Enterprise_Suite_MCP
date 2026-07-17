@@ -99,7 +99,7 @@ tools:
   - name: case_file_get
     description: "Retrieves details of a specific case file. Requires: caseFileId. Use to verify a case file exists before creating evidence groups, dossiers, or signature requests."
   - name: session_login
-    description: "Authenticates with EAD Enterprise Suite to obtain a session JWT. Takes NO parameters — credentials are read from the server environment (MCP_AUTH_EMAIL plus MCP_AUTH_PASSWORD, or the OpenID Connect variables). For OpenID accounts this starts an Azure AD device flow: the first call returns a browser link + code to approve in Microsoft Authenticator, then call again to finish. The MCP server manages authentication automatically; call this only if you hit 401 errors."
+    description: "Authenticates with EAD Enterprise Suite to obtain a session JWT. Takes NO parameters — credentials are read from the server environment: MCP_AUTH_USER_KEY (a long-lived user key, exchanged automatically for a session token) or MCP_AUTH_EMAIL plus MCP_AUTH_PASSWORD. The MCP server manages authentication automatically; call this only if you hit 401 errors."
   - name: session_info
     description: "Retrieves information about the current authenticated session including userId, account, and token expiry. No required parameters."
   - name: use_case_list
