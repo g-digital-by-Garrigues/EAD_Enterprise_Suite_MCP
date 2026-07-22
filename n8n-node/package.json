@@ -1,6 +1,6 @@
 {
   "name": "@g-digital/n8n-nodes-ead-enterprise-suite",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "MCP server for EAD Enterprise Suite - signatures, evidence, notifications, dossiers via AI agents.",
   "license": "MIT",
   "homepage": "https://github.com/g-digital-by-Garrigues/EAD_Enterprise_Suite_MCP",
@@ -18,7 +18,7 @@
   ],
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsup && copyfiles -u 0 \"nodes/**/*.png\" \"nodes/**/*.json\" \"credentials/**/*.png\" dist",
+    "build": "tsup && copyfiles -u 0 \"nodes/**/*.png\" \"nodes/**/*.svg\" \"nodes/**/*.json\" \"credentials/**/*.png\" \"credentials/**/*.svg\" dist",
     "lint": "eslint nodes credentials --ext .ts",
     "prepublishOnly": "npm run build"
   },
