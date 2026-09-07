@@ -12,6 +12,7 @@ import { dossier_create } from "./tools/dossier_create.js";
 import { dossier_update } from "./tools/dossier_update.js";
 import { dossier_certify } from "./tools/dossier_certify.js";
 import { dossier_list } from "./tools/dossier_list.js";
+import { dossier_list_by_user } from "./tools/dossier_list_by_user.js";
 import { dossier_get } from "./tools/dossier_get.js";
 import { dossier_template_list } from "./tools/dossier_template_list.js";
 import { dossier_preview } from "./tools/dossier_preview.js";
@@ -23,6 +24,7 @@ import { dossier_group_certify } from "./tools/dossier_group_certify.js";
 import { dossier_evidence_link } from "./tools/dossier_evidence_link.js";
 import { dossier_evidence_list_to_link } from "./tools/dossier_evidence_list_to_link.js";
 import { dossier_evidence_list } from "./tools/dossier_evidence_list.js";
+import { dossier_evidence_list_by_dossier } from "./tools/dossier_evidence_list_by_dossier.js";
 import { dossier_evidence_get } from "./tools/dossier_evidence_get.js";
 import { dossier_evidence_delete } from "./tools/dossier_evidence_delete.js";
 import { notification_document_add } from "./tools/notification_document_add.js";
@@ -31,13 +33,33 @@ import { notification_request_send } from "./tools/notification_request_send.js"
 import { notification_request_status } from "./tools/notification_request_status.js";
 import { notification_receiver_add } from "./tools/notification_receiver_add.js";
 import { notification_certificate_get } from "./tools/notification_certificate_get.js";
+import { notification_request_list } from "./tools/notification_request_list.js";
+import { notification_request_update } from "./tools/notification_request_update.js";
+import { notification_request_delete } from "./tools/notification_request_delete.js";
+import { notification_request_duplicate } from "./tools/notification_request_duplicate.js";
+import { notification_request_case_file_move } from "./tools/notification_request_case_file_move.js";
+import { notification_receiver_list } from "./tools/notification_receiver_list.js";
+import { notification_receiver_update } from "./tools/notification_receiver_update.js";
+import { notification_receiver_delete } from "./tools/notification_receiver_delete.js";
+import { notification_receiver_add_bulk } from "./tools/notification_receiver_add_bulk.js";
+import { notification_receiver_invalid_purge } from "./tools/notification_receiver_invalid_purge.js";
+import { notification_document_list } from "./tools/notification_document_list.js";
+import { notification_document_delete } from "./tools/notification_document_delete.js";
+import { notification_document_download_url } from "./tools/notification_document_download_url.js";
+import { notification_certificate_list } from "./tools/notification_certificate_list.js";
+import { notification_certificate_document_url } from "./tools/notification_certificate_document_url.js";
+import { notification_certificate_package_url } from "./tools/notification_certificate_package_url.js";
 import { case_file_create } from "./tools/case_file_create.js";
 import { case_file_list } from "./tools/case_file_list.js";
 import { case_file_get } from "./tools/case_file_get.js";
+import { case_file_delete } from "./tools/case_file_delete.js";
 import { session_login } from "./tools/session_login.js";
 import { session_info } from "./tools/session_info.js";
 import { profile_get } from "./tools/profile_get.js";
 import { use_case_list } from "./tools/use_case_list.js";
+import { id_verification_video_create } from "./tools/id_verification_video_create.js";
+import { id_verification_list } from "./tools/id_verification_list.js";
+import { id_verification_contract_url } from "./tools/id_verification_contract_url.js";
 import { signature_group_create } from "./tools/signature_group_create.js";
 import { signature_group_list } from "./tools/signature_group_list.js";
 import { signature_request_create } from "./tools/signature_request_create.js";
@@ -45,15 +67,27 @@ import { signature_request_get } from "./tools/signature_request_get.js";
 import { signature_request_cancel } from "./tools/signature_request_cancel.js";
 import { signature_request_add_document } from "./tools/signature_request_add_document.js";
 import { signature_document_list } from "./tools/signature_document_list.js";
+import { signature_document_signatory_list } from "./tools/signature_document_signatory_list.js";
+import { signature_document_observer_list } from "./tools/signature_document_observer_list.js";
+import { signature_signatory_progress_list } from "./tools/signature_signatory_progress_list.js";
 import { signature_participant_create } from "./tools/signature_participant_create.js";
+import { signature_participant_add_bulk } from "./tools/signature_participant_add_bulk.js";
 import { signature_participant_list } from "./tools/signature_participant_list.js";
+import { signature_participant_update } from "./tools/signature_participant_update.js";
+import { signature_participant_delete } from "./tools/signature_participant_delete.js";
+import { signature_participant_invalid_purge } from "./tools/signature_participant_invalid_purge.js";
 import { assign_validator_to_signatory } from "./tools/assign_validator_to_signatory.js";
+import { signature_validator_list } from "./tools/signature_validator_list.js";
+import { signature_validator_unassign } from "./tools/signature_validator_unassign.js";
 import { activate_signature_request } from "./tools/activate_signature_request.js";
 import { signature_coordinate_set } from "./tools/signature_coordinate_set.js";
 import { signature_certificate_get } from "./tools/signature_certificate_get.js";
 import { large_evidence_upload_initiate } from "./tools/large_evidence_upload_initiate.js";
 import { large_evidence_upload_complete } from "./tools/large_evidence_upload_complete.js";
+import { large_evidence_upload_get } from "./tools/large_evidence_upload_get.js";
 import { evidence_upload } from "./tools/evidence_upload.js";
+import { notification_send } from "./tools/notification_send.js";
+import { notification_send_with_attachments } from "./tools/notification_send_with_attachments.js";
 
 await createServer({
   name: "io.github.g-digital-by-Garrigues/ead-enterprise-suite",
@@ -69,6 +103,7 @@ dossier_create,
 dossier_update,
 dossier_certify,
 dossier_list,
+dossier_list_by_user,
 dossier_get,
 dossier_template_list,
 dossier_preview,
@@ -80,6 +115,7 @@ dossier_group_certify,
 dossier_evidence_link,
 dossier_evidence_list_to_link,
 dossier_evidence_list,
+dossier_evidence_list_by_dossier,
 dossier_evidence_get,
 dossier_evidence_delete,
 notification_document_add,
@@ -88,13 +124,33 @@ notification_request_send,
 notification_request_status,
 notification_receiver_add,
 notification_certificate_get,
+notification_request_list,
+notification_request_update,
+notification_request_delete,
+notification_request_duplicate,
+notification_request_case_file_move,
+notification_receiver_list,
+notification_receiver_update,
+notification_receiver_delete,
+notification_receiver_add_bulk,
+notification_receiver_invalid_purge,
+notification_document_list,
+notification_document_delete,
+notification_document_download_url,
+notification_certificate_list,
+notification_certificate_document_url,
+notification_certificate_package_url,
 case_file_create,
 case_file_list,
 case_file_get,
+case_file_delete,
 session_login,
 session_info,
 profile_get,
 use_case_list,
+id_verification_video_create,
+id_verification_list,
+id_verification_contract_url,
 signature_group_create,
 signature_group_list,
 signature_request_create,
@@ -102,14 +158,26 @@ signature_request_get,
 signature_request_cancel,
 signature_request_add_document,
 signature_document_list,
+signature_document_signatory_list,
+signature_document_observer_list,
+signature_signatory_progress_list,
 signature_participant_create,
+signature_participant_add_bulk,
 signature_participant_list,
+signature_participant_update,
+signature_participant_delete,
+signature_participant_invalid_purge,
 assign_validator_to_signatory,
+signature_validator_list,
+signature_validator_unassign,
 activate_signature_request,
 signature_coordinate_set,
 signature_certificate_get,
 large_evidence_upload_initiate,
 large_evidence_upload_complete,
+large_evidence_upload_get,
 evidence_upload,
+notification_send,
+notification_send_with_attachments,
   ],
 });

@@ -57,7 +57,11 @@ export const zShowSessionInfoControllerRunPath = z.object({
 });
 
 export const zShowSessionInfoControllerRunResponse = z.object({
-    type: z.enum(['Password', 'OpenId']),
+    type: z.enum([
+        'Password',
+        'OpenId',
+        'UserKey'
+    ]),
     issuer: z.string().optional(),
     clientId: z.string().optional(),
     scope: z.array(z.string()).optional()
@@ -102,6 +106,48 @@ export const zCreateCaseFilesSharingControllerRunBody = z.object({
 export const zCreateCaseFilesSharingControllerRunPath = z.object({
     caseFileId: z.string()
 });
+
+export const zDeleteCaseFileControllerRunPath = z.object({
+    caseFileId: z.string()
+});
+
+export const zDeleteCaseFileControllerRunResponse = z.void();
+
+export const zShowCaseFileControllerRunPath = z.object({
+    caseFileId: z.string()
+});
+
+export const zShowCaseFileControllerRunResponse = z.object({
+    id: z.string(),
+    code: z.string(),
+    name: z.string(),
+    useCaseId: z.string(),
+    createdAt: z.string(),
+    status: z.string(),
+    owner: z.object({
+        id: z.string(),
+        firstName: z.string(),
+        lastName: z.string()
+    }),
+    createdBy: z.object({
+        id: z.string(),
+        firstName: z.string(),
+        lastName: z.string()
+    }).optional()
+});
+
+export const zUpdateCaseFileControllerRunBody = z.object({
+    status: z.enum(['OPEN', 'CLOSED']).optional(),
+    name: z.string().optional(),
+    reference: z.string().max(32).optional(),
+    description: z.string().optional()
+});
+
+export const zUpdateCaseFileControllerRunPath = z.object({
+    caseFileId: z.string()
+});
+
+export const zUpdateCaseFileControllerRunResponse = z.void();
 
 export const zDeleteCaseFilesSharingControllerRunPath = z.object({
     caseFileId: z.string(),
@@ -157,6 +203,11 @@ export const zListCaseFilesControllerRunResponse = z.object({
         useCaseId: z.string(),
         createdAt: z.string(),
         status: z.string(),
+        sharingRole: z.enum([
+            'COLLABORATOR',
+            'EDITOR',
+            'MANAGER'
+        ]).optional(),
         owner: z.object({
             id: z.string(),
             firstName: z.string(),
@@ -202,42 +253,6 @@ export const zListCaseFilesSharingControllerRunResponse = z.object({
     }).optional()
 });
 
-export const zShowCaseFileControllerRunPath = z.object({
-    caseFileId: z.string()
-});
-
-export const zShowCaseFileControllerRunResponse = z.object({
-    id: z.string(),
-    code: z.string(),
-    name: z.string(),
-    useCaseId: z.string(),
-    createdAt: z.string(),
-    status: z.string(),
-    owner: z.object({
-        id: z.string(),
-        firstName: z.string(),
-        lastName: z.string()
-    }),
-    createdBy: z.object({
-        id: z.string(),
-        firstName: z.string(),
-        lastName: z.string()
-    }).optional()
-});
-
-export const zUpdateCaseFileControllerRunBody = z.object({
-    status: z.enum(['OPEN', 'CLOSED']).optional(),
-    name: z.string().optional(),
-    reference: z.string().max(32).optional(),
-    description: z.string().optional()
-});
-
-export const zUpdateCaseFileControllerRunPath = z.object({
-    caseFileId: z.string()
-});
-
-export const zUpdateCaseFileControllerRunResponse = z.void();
-
 export const zShowCaseFilesSharingControllerRunPath = z.object({
     caseFileId: z.string()
 });
@@ -254,11 +269,11 @@ export const zCertifyDossierControllerRunPath = z.object({
     dossierId: z.string()
 });
 
-export const zListDossiersControllerRunPath = z.object({
+export const zListDossiersByCaseFileControllerRunPath = z.object({
     caseFileId: z.string()
 });
 
-export const zListDossiersControllerRunQuery = z.object({
+export const zListDossiersByCaseFileControllerRunQuery = z.object({
     filter: z.object({
         caseFileId: z.uuid().optional(),
         search: z.string().optional(),
@@ -287,15 +302,17 @@ export const zListDossiersControllerRunQuery = z.object({
     }).optional()
 });
 
-export const zListDossiersControllerRunResponse = z.object({
+export const zListDossiersByCaseFileControllerRunResponse = z.object({
     data: z.array(z.object({
-        id: z.string(),
         caseFileId: z.string(),
+        id: z.string(),
         code: z.string(),
         name: z.string(),
         status: z.string(),
         createdAt: z.string(),
         certifiedAt: z.string().optional(),
+        validityFrom: z.string(),
+        validityTo: z.string(),
         evidencesCount: z.number(),
         evidenceGroupsCount: z.number(),
         visibility: z.string(),
@@ -308,7 +325,13 @@ export const zListDossiersControllerRunResponse = z.object({
             id: z.string(),
             firstName: z.string(),
             lastName: z.string()
-        }).optional()
+        }).optional(),
+        caseFile: z.object({
+            id: z.string(),
+            useCaseId: z.string(),
+            name: z.string(),
+            code: z.string()
+        })
     })).optional(),
     meta: z.object({
         totalElements: z.number().optional()
@@ -392,7 +415,14 @@ export const zShowDossierControllerRunResponse = z.object({
         firstName: z.string(),
         lastName: z.string()
     }).optional(),
-    accessToken: z.string().optional()
+    accessToken: z.string().optional(),
+    evidenceStats: z.object({
+        total: z.number(),
+        completed: z.number(),
+        inProcess: z.number(),
+        error: z.number(),
+        pendingLargeUpload: z.number()
+    })
 });
 
 export const zUpdateDossierControllerRunBody = z.object({
@@ -581,20 +611,24 @@ export const zListDossierEvidenceGroupsControllerRunResponse = z.object({
         evidencesCount: z.number(),
         originalCreatedAt: z.string(),
         type: z.string(),
-        revised: z.boolean()
+        revised: z.boolean(),
+        status: z.enum([
+            'OPEN',
+            'CLOSED',
+            'CLOSING'
+        ])
     })).optional(),
     meta: z.object({
         totalElements: z.number().optional()
     }).optional()
 });
 
-export const zListDossierEvidencesControllerRunPath = z.object({
+export const zListDossierEvidencesByDossierControllerRunPath = z.object({
     caseFileId: z.string(),
-    dossierId: z.string(),
-    dossierEvidenceGroupId: z.string()
+    dossierId: z.string()
 });
 
-export const zListDossierEvidencesControllerRunQuery = z.object({
+export const zListDossierEvidencesByDossierControllerRunQuery = z.object({
     filter: z.object({
         evidenceIds: z.array(z.uuid()).optional(),
         dossierId: z.uuid().optional(),
@@ -614,15 +648,83 @@ export const zListDossierEvidencesControllerRunQuery = z.object({
     }).optional()
 });
 
-export const zListDossierEvidencesControllerRunResponse = z.object({
+export const zListDossierEvidencesByDossierControllerRunResponse = z.object({
     data: z.array(z.object({
         id: z.string(),
+        status: z.enum([
+            'COMPLETED',
+            'PENDING_LARGE_UPLOAD',
+            'IN_PROCESS',
+            'ERROR'
+        ]),
         title: z.string(),
         fileSize: z.number().optional(),
         fileName: z.string().optional(),
         type: z.string(),
         capturedAt: z.string(),
         custodyType: z.string(),
+        evidenceId: z.string(),
+        dossierEvidenceGroup: z.object({
+            id: z.string(),
+            caseFileId: z.string(),
+            evidenceGroupId: z.string(),
+            code: z.string(),
+            name: z.string(),
+            type: z.enum([
+                'FILE',
+                'PHOTO',
+                'VIDEO',
+                'WEB_PLUGIN'
+            ])
+        })
+    })).optional(),
+    meta: z.object({
+        totalElements: z.number().optional()
+    }).optional()
+});
+
+export const zListDossierEvidencesByGroupControllerRunPath = z.object({
+    caseFileId: z.string(),
+    dossierId: z.string(),
+    dossierEvidenceGroupId: z.string()
+});
+
+export const zListDossierEvidencesByGroupControllerRunQuery = z.object({
+    filter: z.object({
+        evidenceIds: z.array(z.uuid()).optional(),
+        dossierId: z.uuid().optional(),
+        dossierEvidenceGroupId: z.uuid().optional(),
+        capturedFrom: z.string().optional(),
+        capturedUntil: z.string().optional(),
+        title: z.string().optional(),
+        id: z.string().optional()
+    }).optional(),
+    order: z.object({
+        capturedAt: z.enum(['ASC', 'DESC']).optional(),
+        createdAt: z.enum(['ASC', 'DESC']).optional()
+    }).optional(),
+    page: z.object({
+        number: z.number().gte(1).default(1),
+        size: z.number().gte(0).lte(100).default(20)
+    }).optional()
+});
+
+export const zListDossierEvidencesByGroupControllerRunResponse = z.object({
+    data: z.array(z.object({
+        id: z.string(),
+        status: z.enum([
+            'COMPLETED',
+            'PENDING_LARGE_UPLOAD',
+            'IN_PROCESS',
+            'ERROR'
+        ]),
+        title: z.string(),
+        fileSize: z.number().optional(),
+        fileName: z.string().optional(),
+        type: z.string(),
+        capturedAt: z.string(),
+        custodyType: z.string(),
+        evidenceId: z.string(),
         dossierEvidenceGroupId: z.string()
     })).optional(),
     meta: z.object({
@@ -716,6 +818,76 @@ export const zListDossierRecallRequestsControllerRunResponse = z.object({
         email: z.string(),
         reason: z.string(),
         createdAt: z.string()
+    })).optional(),
+    meta: z.object({
+        totalElements: z.number().optional()
+    }).optional()
+});
+
+export const zListDossiersByUserControllerRunPath = z.object({
+    userId: z.string()
+});
+
+export const zListDossiersByUserControllerRunQuery = z.object({
+    filter: z.object({
+        caseFileId: z.uuid().optional(),
+        search: z.string().optional(),
+        createdFrom: z.string().optional(),
+        createdUntil: z.string().optional(),
+        status: z.enum([
+            'CERTIFYING',
+            'DRAFT',
+            'CERTIFIED'
+        ]).optional(),
+        statuses: z.array(z.enum([
+            'CERTIFYING',
+            'DRAFT',
+            'CERTIFIED'
+        ])).optional(),
+        createdById: z.uuid().optional(),
+        ownerIds: z.array(z.uuid()).optional(),
+        id: z.string().optional(),
+        caseFileIds: z.array(z.uuid()).optional()
+    }).optional(),
+    order: z.object({
+        createdAt: z.enum(['ASC', 'DESC']).optional()
+    }).optional(),
+    page: z.object({
+        number: z.number().gte(1).default(1),
+        size: z.number().gte(0).lte(100).default(20)
+    }).optional()
+});
+
+export const zListDossiersByUserControllerRunResponse = z.object({
+    data: z.array(z.object({
+        caseFileId: z.string(),
+        id: z.string(),
+        code: z.string(),
+        name: z.string(),
+        status: z.string(),
+        createdAt: z.string(),
+        certifiedAt: z.string().optional(),
+        validityFrom: z.string(),
+        validityTo: z.string(),
+        evidencesCount: z.number(),
+        evidenceGroupsCount: z.number(),
+        visibility: z.string(),
+        owner: z.object({
+            id: z.string(),
+            firstName: z.string(),
+            lastName: z.string()
+        }),
+        createdBy: z.object({
+            id: z.string(),
+            firstName: z.string(),
+            lastName: z.string()
+        }).optional(),
+        caseFile: z.object({
+            id: z.string(),
+            useCaseId: z.string(),
+            name: z.string(),
+            code: z.string()
+        })
     })).optional(),
     meta: z.object({
         totalElements: z.number().optional()
@@ -1318,6 +1490,111 @@ export const zUploadUrlEvidenceControllerRunResponse = z.object({
     expiration: z.string()
 });
 
+export const zCreatePresentialIdVerificationControllerRunBody = z.object({
+    id: z.uuid(),
+    name: z.string().max(25),
+    firstSurname: z.string().max(50),
+    secondSurname: z.string().max(50).optional(),
+    documentType: z.enum(['DNI']),
+    documentNumber: z.string(),
+    email: z.string(),
+    phonePrefix: z.string(),
+    phoneNumber: z.string(),
+    purpose: z.enum(['SOFTWARE']).optional(),
+    identificationType: z.enum(['PRESENTIAL', 'VIDEO']).optional(),
+    documentFrontSideImage: z.record(z.string(), z.unknown()).optional(),
+    documentBackSideImage: z.record(z.string(), z.unknown()).optional()
+});
+
+export const zCreateVideoIdVerificationControllerRunBody = z.object({
+    id: z.uuid(),
+    name: z.string().max(25),
+    firstSurname: z.string().max(50),
+    secondSurname: z.string().max(50).optional(),
+    email: z.string(),
+    phonePrefix: z.string(),
+    phoneNumber: z.string()
+});
+
+export const zDownloadIdVerificationContractControllerRunPath = z.object({
+    verificationId: z.string()
+});
+
+export const zListIdVerificationsControllerRunPath = z.object({
+    userId: z.string()
+});
+
+export const zListIdVerificationsControllerRunQuery = z.object({
+    filter: z.object({
+        email: z.string().optional(),
+        status: z.enum([
+            'CREATED',
+            'UNDER_REVIEW',
+            'COMPLETED',
+            'REJECTED'
+        ]).optional(),
+        statuses: z.array(z.enum([
+            'CREATED',
+            'UNDER_REVIEW',
+            'COMPLETED',
+            'REJECTED'
+        ])).optional(),
+        identificationType: z.enum(['PRESENTIAL', 'VIDEO']).optional()
+    }).optional(),
+    order: z.object({
+        createdAt: z.enum(['ASC', 'DESC']).optional()
+    }).optional(),
+    page: z.object({
+        number: z.number().gte(1).default(1),
+        size: z.number().gte(0).lte(100).default(20)
+    }).optional()
+});
+
+export const zListIdVerificationsControllerRunResponse = z.object({
+    data: z.array(z.object({
+        id: z.string(),
+        email: z.string(),
+        name: z.string(),
+        firstSurname: z.string(),
+        secondSurname: z.string().optional(),
+        status: z.enum([
+            'CREATED',
+            'UNDER_REVIEW',
+            'COMPLETED',
+            'REJECTED'
+        ]),
+        createdAt: z.string(),
+        rejectedReason: z.enum([
+            'INVALID_DNI_FRONT',
+            'INVALID_DNI_BACK',
+            'DNI_EXPIRED',
+            'DATA_MISMATCH',
+            'DUPLICATE_REQUEST',
+            'OTHER'
+        ]).optional(),
+        rejectedContext: z.string().optional(),
+        identificationType: z.enum(['PRESENTIAL', 'VIDEO']),
+        createdBy: z.object({
+            id: z.string(),
+            firstName: z.string(),
+            lastName: z.string(),
+            email: z.string()
+        })
+    })).optional(),
+    meta: z.object({
+        totalElements: z.number().optional()
+    }).optional()
+});
+
+export const zSignIdVerificationContractControllerRunBody = z.object({
+    applicantOtp: z.string(),
+    operatorOtp: z.string()
+});
+
+export const zSignIdVerificationContractControllerRunPath = z.object({
+    verificationId: z.string()
+});
+
 export const zCancelLargeEvidenceUploadControllerRunPath = z.object({
     caseFileId: z.string(),
     evidenceGroupId: z.string(),
@@ -1351,6 +1628,7 @@ export const zListLargeEvidenceUploadsControllerRunQuery = z.object({
 export const zListLargeEvidenceUploadsControllerRunResponse = z.object({
     data: z.array(z.object({
         id: z.string(),
+        evidenceId: z.string(),
         fileName: z.string(),
         chunkSizeMB: z.number(),
         totalSizeMB: z.number(),
@@ -1420,6 +1698,21 @@ export const zShowEvidencePendingOffsetUploadUrlControllerRunResponse = z.object
     url: z.string()
 });
 
+export const zShowLargeEvidenceUploadControllerRunPath = z.object({
+    caseFileId: z.string(),
+    evidenceGroupId: z.string(),
+    id: z.string()
+});
+
+export const zShowLargeEvidenceUploadControllerRunResponse = z.object({
+    id: z.string(),
+    evidenceId: z.string(),
+    fileName: z.string(),
+    chunkSizeMB: z.number(),
+    totalSizeMB: z.number(),
+    biggestUploadedOffset: z.number()
+});
+
 export const zListNotificationCertificatesControllerRunPath = z.object({
     caseFileId: z.string(),
     notificationRequestId: z.string(),
@@ -1454,7 +1747,8 @@ export const zListNotificationCertificatesControllerRunResponse = z.object({
         ]),
         createdAt: z.string(),
         certifiedAt: z.string().optional(),
-        language: z.enum(['en_GB', 'es_ES'])
+        language: z.enum(['en_GB', 'es_ES']),
+        embeddedDocuments: z.boolean()
     })).optional(),
     meta: z.object({
         totalElements: z.number().optional()
@@ -1463,7 +1757,8 @@ export const zListNotificationCertificatesControllerRunResponse = z.object({
 
 export const zCreateNotificationCertificateControllerRunBody = z.object({
     id: z.uuid(),
-    language: z.enum(['en_GB', 'es_ES']).optional()
+    language: z.enum(['en_GB', 'es_ES']).optional(),
+    embeddedDocuments: z.boolean().optional()
 });
 
 export const zCreateNotificationCertificateControllerRunPath = z.object({
@@ -1605,6 +1900,7 @@ export const zListNotificationReceiversControllerRunResponse = z.object({
         statusUpdatedAt: z.string(),
         otpRequired: z.boolean(),
         sendWaUrl: z.boolean(),
+        sendSmsUrl: z.boolean(),
         emailBounced: z.boolean(),
         createdAt: z.string()
     })).optional(),
@@ -1621,7 +1917,8 @@ export const zCreateNotificationReceiverControllerRunBody = z.object({
     phoneNumber: z.string().optional(),
     phonePrefix: z.string().optional(),
     otpRequired: z.boolean().optional(),
-    sendWaUrl: z.boolean().optional()
+    sendWaUrl: z.boolean().optional(),
+    sendSmsUrl: z.boolean().optional()
 });
 
 export const zCreateNotificationReceiverControllerRunPath = z.object({
@@ -1640,7 +1937,8 @@ export const zCreateNotificationRequestControllerRunBody = z.object({
     content: z.string(),
     language: z.enum(['en_GB', 'es_ES']),
     otpByDefault: z.boolean().optional(),
-    sendWaUrlByDefault: z.boolean().optional()
+    sendWaUrlByDefault: z.boolean().optional(),
+    sendSmsUrlByDefault: z.boolean().optional()
 });
 
 export const zCreateNotificationRequestControllerRunPath = z.object({
@@ -1714,6 +2012,7 @@ export const zShowNotificationRequestControllerRunResponse = z.object({
     createdAt: z.string(),
     otpByDefault: z.boolean(),
     sendWaUrlByDefault: z.boolean(),
+    sendSmsUrlByDefault: z.boolean(),
     caseFile: z.object({
         id: z.string(),
         useCaseId: z.string(),
@@ -1739,6 +2038,9 @@ export const zShowNotificationRequestControllerRunResponse = z.object({
         total: z.number(),
         bounced: z.number(),
         valid: z.number()
+    }),
+    documentStats: z.object({
+        total: z.number()
     })
 });
 
@@ -1767,6 +2069,18 @@ export const zDuplicateNotificationRequestControllerRunBody = z.object({
 export const zDuplicateNotificationRequestControllerRunPath = z.object({
     caseFileId: z.string(),
     notificationRequestId: z.string()
+});
+
+export const zDuplicateNotificationReceiverControllerRunBody = z.object({
+    notificationRequestId: z.uuid(),
+    id: z.uuid(),
+    email: z.string()
+});
+
+export const zDuplicateNotificationReceiverControllerRunPath = z.object({
+    caseFileId: z.string(),
+    notificationRequestId: z.string(),
+    receiverId: z.string()
 });
 
 export const zListNotificationRequestsControllerRunPath = z.object({
@@ -1837,6 +2151,7 @@ export const zListNotificationRequestsControllerRunResponse = z.object({
             total: z.number()
         }),
         sendWaUrlByDefault: z.boolean(),
+        sendSmsUrlByDefault: z.boolean(),
         caseFile: z.object({
             id: z.string(),
             useCaseId: z.string(),
@@ -2280,6 +2595,10 @@ export const zListSignatureParticipantsControllerRunResponse = z.object({
         participantStats: z.object({
             validators: z.number()
         }).optional(),
+        documentStats: z.object({
+            signed: z.number(),
+            total: z.number()
+        }).optional(),
         editable: z.boolean(),
         emailBounced: z.boolean(),
         valid: z.boolean(),
@@ -2695,6 +3014,42 @@ export const zListDocumentSignatoriesControllerRunResponse = z.object({
         participantStats: z.object({
             validators: z.number()
         })
+    })).optional(),
+    meta: z.object({
+        totalElements: z.number().optional()
+    }).optional()
+});
+
+export const zListSignatoryDocumentsControllerRunPath = z.object({
+    caseFileId: z.string(),
+    requestId: z.string(),
+    signatoryId: z.string()
+});
+
+export const zListSignatoryDocumentsControllerRunQuery = z.object({
+    filter: z.object({
+        id: z.string().optional()
+    }).optional(),
+    order: z.object({
+        createdAt: z.enum(['ASC', 'DESC']).optional()
+    }).optional(),
+    page: z.object({
+        number: z.number().gte(1).default(1),
+        size: z.number().gte(0).lte(100).default(20)
+    }).optional()
+});
+
+export const zListSignatoryDocumentsControllerRunResponse = z.object({
+    data: z.array(z.object({
+        id: z.string(),
+        fileName: z.string(),
+        fileSize: z.number().optional(),
+        status: z.enum([
+            'PENDING',
+            'READY_TO_SIGN',
+            'SIGNED',
+            'REJECTED'
+        ])
     })).optional(),
     meta: z.object({
         totalElements: z.number().optional()
@@ -3178,14 +3533,20 @@ export const zShowProfileControllerRunResponse = z.object({
     onboardingShown: z.boolean(),
     certifierStripeCustomerExists: z.boolean(),
     loginInfo: z.object({
-        type: z.enum(['Password', 'OpenId']),
+        type: z.enum([
+            'Password',
+            'OpenId',
+            'UserKey'
+        ]),
         issuer: z.string().optional(),
         clientId: z.string().optional()
     }),
     permit: z.object({
         evidences: z.boolean(),
         idVerifications: z.boolean(),
-        notifications: z.boolean()
+        notifications: z.boolean(),
+        chats: z.boolean(),
+        signatures: z.boolean()
     })
 });
 
@@ -3214,7 +3575,9 @@ export const zShowUserControllerRunResponse = z.object({
     permit: z.object({
         evidences: z.boolean(),
         notifications: z.boolean(),
-        idVerifications: z.boolean()
+        idVerifications: z.boolean(),
+        chats: z.boolean(),
+        signatures: z.boolean()
     })
 });
 
@@ -3237,7 +3600,8 @@ export const zUpdateUserStatusControllerRunResponse = z.void();
 export const zUpdateAllUserPermitsByCompanyControllerRunBody = z.object({
     evidences: z.boolean().optional(),
     idVerifications: z.boolean().optional(),
-    notifications: z.boolean().optional()
+    notifications: z.boolean().optional(),
+    signatures: z.boolean().optional()
 });
 
 export const zUpdateAllUserPermitsByCompanyControllerRunPath = z.object({
@@ -3249,7 +3613,8 @@ export const zUpdateAllUserPermitsByCompanyControllerRunResponse = z.void();
 export const zUpdateUserPermitControllerRunBody = z.object({
     evidences: z.boolean().optional(),
     idVerifications: z.boolean().optional(),
-    notifications: z.boolean().optional()
+    notifications: z.boolean().optional(),
+    signatures: z.boolean().optional()
 });
 
 export const zUpdateUserPermitControllerRunPath = z.object({

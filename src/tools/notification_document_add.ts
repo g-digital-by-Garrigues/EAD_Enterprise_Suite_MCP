@@ -17,7 +17,7 @@ const inputSchema = rawInputSchema;
 
 export const notification_document_add = defineTool({
   name: "notification_document_add",
-  description: "Performs the notification_document_add operation. Review the API documentation for full field details.",
+  description: "Attaches a document to a notification. Two steps: this call registers the file and returns { url }, a presigned upload URL, and you then PUT the raw bytes to that URL with an x-amz-checksum-sha256 header. Generate a UUID v4 for `id`, and compute the file's SHA-256 hex hash BEFORE calling — it goes in `hash`. ORDER MATTERS AND GETTING IT WRONG FAILS THE SEND: add every document BEFORE adding recipients, and wait until each document reaches READY_TO_SEND (poll notification_document_list; roughly 8 seconds) before calling notification_request_send. Attaching after recipients, or sending while a document is still PENDING, returns 409/404 NOTIFICATION_NOT_FOUND. The maximum number of attachments is a per-subscription setting rather than a fixed API limit, so do not assume a number. Attachments can be bundled into the delivery certificate — see notification_certificate_package_url.",
   inputSchema,
   annotations: {
     title: "Notification Document Add",
