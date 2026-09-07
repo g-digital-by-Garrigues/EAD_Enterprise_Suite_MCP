@@ -115,8 +115,11 @@ still pending? Are there any documents I can already see?
 
 **Expected tool sequence:**
 1. `signature_request_get` — retrieves request metadata and current status
-2. `signature_participant_list` — lists all participants with signing status
-3. `signature_document_list` — lists uploaded documents
+2. `signature_participant_list` — lists all participants with their role (SIGNATORY / OBSERVER /
+   VALIDATOR), contact details and validity
+3. `signature_document_list` — lists the request's documents with their status and
+   `signatoryStatusStats`
+4. `signature_document_signatory_list` — per-signatory signing status for one document
 
 **Sample agent response:**
 > Signature request "Contrato Distribución" (ID: `sig_456`) — Status: IN_PROGRESS. Participants: Pedro Sánchez ✅ signed at 15:30 UTC; Lucía Martín ⏳ pending (invitation sent). 1 document: contrato-distribución.pdf (4 pages). Waiting on 1 of 2 signatures to close.

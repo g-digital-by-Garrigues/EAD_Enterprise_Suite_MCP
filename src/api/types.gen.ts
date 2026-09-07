@@ -130,7 +130,7 @@ export type ShowSessionInfoControllerRunData = {
 
 export type ShowSessionInfoControllerRunResponses = {
     200: {
-        type: 'Password' | 'OpenId';
+        type: 'Password' | 'OpenId' | 'UserKey';
         issuer?: string;
         clientId?: string;
         scope?: Array<string>;
@@ -207,6 +207,73 @@ export type CreateCaseFilesSharingControllerRunResponses = {
     201: unknown;
 };
 
+export type DeleteCaseFileControllerRunData = {
+    body?: never;
+    path: {
+        caseFileId: string;
+    };
+    query?: never;
+    url: '/case-files/{caseFileId}';
+};
+
+export type DeleteCaseFileControllerRunResponses = {
+    204: void;
+};
+
+export type DeleteCaseFileControllerRunResponse = DeleteCaseFileControllerRunResponses[keyof DeleteCaseFileControllerRunResponses];
+
+export type ShowCaseFileControllerRunData = {
+    body?: never;
+    path: {
+        caseFileId: string;
+    };
+    query?: never;
+    url: '/case-files/{caseFileId}';
+};
+
+export type ShowCaseFileControllerRunResponses = {
+    200: {
+        id: string;
+        code: string;
+        name: string;
+        useCaseId: string;
+        createdAt: string;
+        status: string;
+        owner: {
+            id: string;
+            firstName: string;
+            lastName: string;
+        };
+        createdBy?: {
+            id: string;
+            firstName: string;
+            lastName: string;
+        };
+    };
+};
+
+export type ShowCaseFileControllerRunResponse = ShowCaseFileControllerRunResponses[keyof ShowCaseFileControllerRunResponses];
+
+export type UpdateCaseFileControllerRunData = {
+    body: {
+        status?: 'OPEN' | 'CLOSED';
+        name?: string;
+        reference?: string;
+        description?: string;
+    };
+    path: {
+        caseFileId: string;
+    };
+    query?: never;
+    url: '/case-files/{caseFileId}';
+};
+
+export type UpdateCaseFileControllerRunResponses = {
+    204: void;
+};
+
+export type UpdateCaseFileControllerRunResponse = UpdateCaseFileControllerRunResponses[keyof UpdateCaseFileControllerRunResponses];
+
 export type DeleteCaseFilesSharingControllerRunData = {
     body?: never;
     path: {
@@ -277,6 +344,7 @@ export type ListCaseFilesControllerRunResponses = {
             useCaseId: string;
             createdAt: string;
             status: string;
+            sharingRole?: 'COLLABORATOR' | 'EDITOR' | 'MANAGER';
             owner: {
                 id: string;
                 firstName: string;
@@ -332,58 +400,6 @@ export type ListCaseFilesSharingControllerRunResponses = {
 
 export type ListCaseFilesSharingControllerRunResponse = ListCaseFilesSharingControllerRunResponses[keyof ListCaseFilesSharingControllerRunResponses];
 
-export type ShowCaseFileControllerRunData = {
-    body?: never;
-    path: {
-        caseFileId: string;
-    };
-    query?: never;
-    url: '/case-files/{caseFileId}';
-};
-
-export type ShowCaseFileControllerRunResponses = {
-    200: {
-        id: string;
-        code: string;
-        name: string;
-        useCaseId: string;
-        createdAt: string;
-        status: string;
-        owner: {
-            id: string;
-            firstName: string;
-            lastName: string;
-        };
-        createdBy?: {
-            id: string;
-            firstName: string;
-            lastName: string;
-        };
-    };
-};
-
-export type ShowCaseFileControllerRunResponse = ShowCaseFileControllerRunResponses[keyof ShowCaseFileControllerRunResponses];
-
-export type UpdateCaseFileControllerRunData = {
-    body: {
-        status?: 'OPEN' | 'CLOSED';
-        name?: string;
-        reference?: string;
-        description?: string;
-    };
-    path: {
-        caseFileId: string;
-    };
-    query?: never;
-    url: '/case-files/{caseFileId}';
-};
-
-export type UpdateCaseFileControllerRunResponses = {
-    204: void;
-};
-
-export type UpdateCaseFileControllerRunResponse = UpdateCaseFileControllerRunResponses[keyof UpdateCaseFileControllerRunResponses];
-
 export type ShowCaseFilesSharingControllerRunData = {
     body?: never;
     path: {
@@ -418,7 +434,7 @@ export type CertifyDossierControllerRunResponses = {
     202: unknown;
 };
 
-export type ListDossiersControllerRunData = {
+export type ListDossiersByCaseFileControllerRunData = {
     body?: never;
     path: {
         caseFileId: string;
@@ -446,16 +462,21 @@ export type ListDossiersControllerRunData = {
     url: '/case-files/{caseFileId}/dossiers';
 };
 
-export type ListDossiersControllerRunResponses = {
+export type ListDossiersByCaseFileControllerRunResponses = {
     200: {
         data?: Array<{
-            id: string;
+            /**
+             * @deprecated
+             */
             caseFileId: string;
+            id: string;
             code: string;
             name: string;
             status: string;
             createdAt: string;
             certifiedAt?: string;
+            validityFrom: string;
+            validityTo: string;
             evidencesCount: number;
             evidenceGroupsCount: number;
             visibility: string;
@@ -469,6 +490,12 @@ export type ListDossiersControllerRunResponses = {
                 firstName: string;
                 lastName: string;
             };
+            caseFile: {
+                id: string;
+                useCaseId: string;
+                name: string;
+                code: string;
+            };
         }>;
         meta?: {
             totalElements?: number;
@@ -476,7 +503,7 @@ export type ListDossiersControllerRunResponses = {
     };
 };
 
-export type ListDossiersControllerRunResponse = ListDossiersControllerRunResponses[keyof ListDossiersControllerRunResponses];
+export type ListDossiersByCaseFileControllerRunResponse = ListDossiersByCaseFileControllerRunResponses[keyof ListDossiersByCaseFileControllerRunResponses];
 
 export type CreateDossierControllerRunData = {
     body: {
@@ -596,6 +623,13 @@ export type ShowDossierControllerRunResponses = {
             lastName: string;
         };
         accessToken?: string;
+        evidenceStats: {
+            total: number;
+            completed: number;
+            inProcess: number;
+            error: number;
+            pendingLargeUpload: number;
+        };
     };
 };
 
@@ -855,6 +889,7 @@ export type ListDossierEvidenceGroupsControllerRunResponses = {
             originalCreatedAt: string;
             type: string;
             revised: boolean;
+            status: 'OPEN' | 'CLOSED' | 'CLOSING';
         }>;
         meta?: {
             totalElements?: number;
@@ -864,7 +899,64 @@ export type ListDossierEvidenceGroupsControllerRunResponses = {
 
 export type ListDossierEvidenceGroupsControllerRunResponse = ListDossierEvidenceGroupsControllerRunResponses[keyof ListDossierEvidenceGroupsControllerRunResponses];
 
-export type ListDossierEvidencesControllerRunData = {
+export type ListDossierEvidencesByDossierControllerRunData = {
+    body?: never;
+    path: {
+        caseFileId: string;
+        dossierId: string;
+    };
+    query?: {
+        filter?: {
+            evidenceIds?: Array<string>;
+            dossierId?: string;
+            dossierEvidenceGroupId?: string;
+            capturedFrom?: string;
+            capturedUntil?: string;
+            title?: string;
+            id?: string;
+        };
+        order?: {
+            capturedAt?: 'ASC' | 'DESC';
+            createdAt?: 'ASC' | 'DESC';
+        };
+        page?: {
+            number: number;
+            size: number;
+        };
+    };
+    url: '/case-files/{caseFileId}/dossiers/{dossierId}/evidences';
+};
+
+export type ListDossierEvidencesByDossierControllerRunResponses = {
+    200: {
+        data?: Array<{
+            id: string;
+            status: 'COMPLETED' | 'PENDING_LARGE_UPLOAD' | 'IN_PROCESS' | 'ERROR';
+            title: string;
+            fileSize?: number;
+            fileName?: string;
+            type: string;
+            capturedAt: string;
+            custodyType: string;
+            evidenceId: string;
+            dossierEvidenceGroup: {
+                id: string;
+                caseFileId: string;
+                evidenceGroupId: string;
+                code: string;
+                name: string;
+                type: 'FILE' | 'PHOTO' | 'VIDEO' | 'WEB_PLUGIN';
+            };
+        }>;
+        meta?: {
+            totalElements?: number;
+        };
+    };
+};
+
+export type ListDossierEvidencesByDossierControllerRunResponse = ListDossierEvidencesByDossierControllerRunResponses[keyof ListDossierEvidencesByDossierControllerRunResponses];
+
+export type ListDossierEvidencesByGroupControllerRunData = {
     body?: never;
     path: {
         caseFileId: string;
@@ -893,16 +985,18 @@ export type ListDossierEvidencesControllerRunData = {
     url: '/case-files/{caseFileId}/dossiers/{dossierId}/evidence-groups/{dossierEvidenceGroupId}/evidences';
 };
 
-export type ListDossierEvidencesControllerRunResponses = {
+export type ListDossierEvidencesByGroupControllerRunResponses = {
     200: {
         data?: Array<{
             id: string;
+            status: 'COMPLETED' | 'PENDING_LARGE_UPLOAD' | 'IN_PROCESS' | 'ERROR';
             title: string;
             fileSize?: number;
             fileName?: string;
             type: string;
             capturedAt: string;
             custodyType: string;
+            evidenceId: string;
             dossierEvidenceGroupId: string;
         }>;
         meta?: {
@@ -911,7 +1005,7 @@ export type ListDossierEvidencesControllerRunResponses = {
     };
 };
 
-export type ListDossierEvidencesControllerRunResponse = ListDossierEvidencesControllerRunResponses[keyof ListDossierEvidencesControllerRunResponses];
+export type ListDossierEvidencesByGroupControllerRunResponse = ListDossierEvidencesByGroupControllerRunResponses[keyof ListDossierEvidencesByGroupControllerRunResponses];
 
 export type ListDossierEvidencesToLinkControllerRunData = {
     body?: never;
@@ -1013,6 +1107,78 @@ export type ListDossierRecallRequestsControllerRunResponses = {
 };
 
 export type ListDossierRecallRequestsControllerRunResponse = ListDossierRecallRequestsControllerRunResponses[keyof ListDossierRecallRequestsControllerRunResponses];
+
+export type ListDossiersByUserControllerRunData = {
+    body?: never;
+    path: {
+        userId: string;
+    };
+    query?: {
+        filter?: {
+            caseFileId?: string;
+            search?: string;
+            createdFrom?: string;
+            createdUntil?: string;
+            status?: 'CERTIFYING' | 'DRAFT' | 'CERTIFIED';
+            statuses?: Array<'CERTIFYING' | 'DRAFT' | 'CERTIFIED'>;
+            createdById?: string;
+            ownerIds?: Array<string>;
+            id?: string;
+            caseFileIds?: Array<string>;
+        };
+        order?: {
+            createdAt?: 'ASC' | 'DESC';
+        };
+        page?: {
+            number: number;
+            size: number;
+        };
+    };
+    url: '/users/{userId}/dossiers';
+};
+
+export type ListDossiersByUserControllerRunResponses = {
+    200: {
+        data?: Array<{
+            /**
+             * @deprecated
+             */
+            caseFileId: string;
+            id: string;
+            code: string;
+            name: string;
+            status: string;
+            createdAt: string;
+            certifiedAt?: string;
+            validityFrom: string;
+            validityTo: string;
+            evidencesCount: number;
+            evidenceGroupsCount: number;
+            visibility: string;
+            owner: {
+                id: string;
+                firstName: string;
+                lastName: string;
+            };
+            createdBy?: {
+                id: string;
+                firstName: string;
+                lastName: string;
+            };
+            caseFile: {
+                id: string;
+                useCaseId: string;
+                name: string;
+                code: string;
+            };
+        }>;
+        meta?: {
+            totalElements?: number;
+        };
+    };
+};
+
+export type ListDossiersByUserControllerRunResponse = ListDossiersByUserControllerRunResponses[keyof ListDossiersByUserControllerRunResponses];
 
 export type ShowDossierDocumentUrlControllerRunData = {
     body?: never;
@@ -1811,6 +1977,134 @@ export type UploadUrlEvidenceControllerRunResponses = {
 
 export type UploadUrlEvidenceControllerRunResponse = UploadUrlEvidenceControllerRunResponses[keyof UploadUrlEvidenceControllerRunResponses];
 
+export type CreatePresentialIdVerificationControllerRunData = {
+    body: {
+        id: string;
+        name: string;
+        firstSurname: string;
+        secondSurname?: string;
+        documentType: 'DNI';
+        documentNumber: string;
+        email: string;
+        phonePrefix: string;
+        phoneNumber: string;
+        purpose?: 'SOFTWARE';
+        identificationType?: 'PRESENTIAL' | 'VIDEO';
+        documentFrontSideImage?: {
+            [key: string]: unknown;
+        };
+        documentBackSideImage?: {
+            [key: string]: unknown;
+        };
+    };
+    path?: never;
+    query?: never;
+    url: '/presential-id-verifications';
+};
+
+export type CreatePresentialIdVerificationControllerRunResponses = {
+    201: unknown;
+};
+
+export type CreateVideoIdVerificationControllerRunData = {
+    body: {
+        id: string;
+        name: string;
+        firstSurname: string;
+        secondSurname?: string;
+        email: string;
+        phonePrefix: string;
+        phoneNumber: string;
+    };
+    path?: never;
+    query?: never;
+    url: '/video-id-verifications';
+};
+
+export type CreateVideoIdVerificationControllerRunResponses = {
+    201: unknown;
+};
+
+export type DownloadIdVerificationContractControllerRunData = {
+    body?: never;
+    path: {
+        verificationId: string;
+    };
+    query?: never;
+    url: '/id-verifications/{verificationId}/download-contract';
+};
+
+export type DownloadIdVerificationContractControllerRunResponses = {
+    200: unknown;
+};
+
+export type ListIdVerificationsControllerRunData = {
+    body?: never;
+    path: {
+        userId: string;
+    };
+    query?: {
+        filter?: {
+            email?: string;
+            status?: 'CREATED' | 'UNDER_REVIEW' | 'COMPLETED' | 'REJECTED';
+            statuses?: Array<'CREATED' | 'UNDER_REVIEW' | 'COMPLETED' | 'REJECTED'>;
+            identificationType?: 'PRESENTIAL' | 'VIDEO';
+        };
+        order?: {
+            createdAt?: 'ASC' | 'DESC';
+        };
+        page?: {
+            number: number;
+            size: number;
+        };
+    };
+    url: '/users/{userId}/id-verifications';
+};
+
+export type ListIdVerificationsControllerRunResponses = {
+    200: {
+        data?: Array<{
+            id: string;
+            email: string;
+            name: string;
+            firstSurname: string;
+            secondSurname?: string;
+            status: 'CREATED' | 'UNDER_REVIEW' | 'COMPLETED' | 'REJECTED';
+            createdAt: string;
+            rejectedReason?: 'INVALID_DNI_FRONT' | 'INVALID_DNI_BACK' | 'DNI_EXPIRED' | 'DATA_MISMATCH' | 'DUPLICATE_REQUEST' | 'OTHER';
+            rejectedContext?: string;
+            identificationType: 'PRESENTIAL' | 'VIDEO';
+            createdBy: {
+                id: string;
+                firstName: string;
+                lastName: string;
+                email: string;
+            };
+        }>;
+        meta?: {
+            totalElements?: number;
+        };
+    };
+};
+
+export type ListIdVerificationsControllerRunResponse = ListIdVerificationsControllerRunResponses[keyof ListIdVerificationsControllerRunResponses];
+
+export type SignIdVerificationContractControllerRunData = {
+    body: {
+        applicantOtp: string;
+        operatorOtp: string;
+    };
+    path: {
+        verificationId: string;
+    };
+    query?: never;
+    url: '/id-verifications/{verificationId}/sign-contract';
+};
+
+export type SignIdVerificationContractControllerRunResponses = {
+    200: unknown;
+};
+
 export type CancelLargeEvidenceUploadControllerRunData = {
     body?: never;
     path: {
@@ -1864,6 +2158,7 @@ export type ListLargeEvidenceUploadsControllerRunResponses = {
     200: {
         data?: Array<{
             id: string;
+            evidenceId: string;
             fileName: string;
             chunkSizeMB: number;
             totalSizeMB: number;
@@ -1968,6 +2263,30 @@ export type ShowEvidencePendingOffsetUploadUrlControllerRunResponses = {
 
 export type ShowEvidencePendingOffsetUploadUrlControllerRunResponse = ShowEvidencePendingOffsetUploadUrlControllerRunResponses[keyof ShowEvidencePendingOffsetUploadUrlControllerRunResponses];
 
+export type ShowLargeEvidenceUploadControllerRunData = {
+    body?: never;
+    path: {
+        caseFileId: string;
+        evidenceGroupId: string;
+        id: string;
+    };
+    query?: never;
+    url: '/case-files/{caseFileId}/evidence-groups/{evidenceGroupId}/evidences/{id}/large-upload';
+};
+
+export type ShowLargeEvidenceUploadControllerRunResponses = {
+    200: {
+        id: string;
+        evidenceId: string;
+        fileName: string;
+        chunkSizeMB: number;
+        totalSizeMB: number;
+        biggestUploadedOffset: number;
+    };
+};
+
+export type ShowLargeEvidenceUploadControllerRunResponse = ShowLargeEvidenceUploadControllerRunResponses[keyof ShowLargeEvidenceUploadControllerRunResponses];
+
 export type ListNotificationCertificatesControllerRunData = {
     body?: never;
     path: {
@@ -2003,6 +2322,7 @@ export type ListNotificationCertificatesControllerRunResponses = {
             createdAt: string;
             certifiedAt?: string;
             language: 'en_GB' | 'es_ES';
+            embeddedDocuments: boolean;
         }>;
         meta?: {
             totalElements?: number;
@@ -2016,6 +2336,7 @@ export type CreateNotificationCertificateControllerRunData = {
     body: {
         id: string;
         language?: 'en_GB' | 'es_ES';
+        embeddedDocuments?: boolean;
     };
     path: {
         caseFileId: string;
@@ -2213,6 +2534,7 @@ export type ListNotificationReceiversControllerRunResponses = {
             statusUpdatedAt: string;
             otpRequired: boolean;
             sendWaUrl: boolean;
+            sendSmsUrl: boolean;
             emailBounced: boolean;
             createdAt: string;
         }>;
@@ -2234,6 +2556,7 @@ export type CreateNotificationReceiverControllerRunData = {
         phonePrefix?: string;
         otpRequired?: boolean;
         sendWaUrl?: boolean;
+        sendSmsUrl?: boolean;
     };
     path: {
         caseFileId: string;
@@ -2256,6 +2579,7 @@ export type CreateNotificationRequestControllerRunData = {
         language: 'en_GB' | 'es_ES';
         otpByDefault?: boolean;
         sendWaUrlByDefault?: boolean;
+        sendSmsUrlByDefault?: boolean;
     };
     path: {
         caseFileId: string;
@@ -2371,6 +2695,7 @@ export type ShowNotificationRequestControllerRunResponses = {
         createdAt: string;
         otpByDefault: boolean;
         sendWaUrlByDefault: boolean;
+        sendSmsUrlByDefault: boolean;
         caseFile: {
             id: string;
             useCaseId: string;
@@ -2396,6 +2721,9 @@ export type ShowNotificationRequestControllerRunResponses = {
             total: number;
             bounced: number;
             valid: number;
+        };
+        documentStats: {
+            total: number;
         };
     };
 };
@@ -2436,6 +2764,25 @@ export type DuplicateNotificationRequestControllerRunData = {
 };
 
 export type DuplicateNotificationRequestControllerRunResponses = {
+    201: unknown;
+};
+
+export type DuplicateNotificationReceiverControllerRunData = {
+    body: {
+        notificationRequestId: string;
+        id: string;
+        email: string;
+    };
+    path: {
+        caseFileId: string;
+        notificationRequestId: string;
+        receiverId: string;
+    };
+    query?: never;
+    url: '/case-files/{caseFileId}/notification-requests/{notificationRequestId}/receivers/{receiverId}/duplicate';
+};
+
+export type DuplicateNotificationReceiverControllerRunResponses = {
     201: unknown;
 };
 
@@ -2480,6 +2827,7 @@ export type ListNotificationRequestsControllerRunResponses = {
                 total: number;
             };
             sendWaUrlByDefault: boolean;
+            sendSmsUrlByDefault: boolean;
             caseFile: {
                 id: string;
                 useCaseId: string;
@@ -3099,6 +3447,10 @@ export type ListSignatureParticipantsControllerRunResponses = {
             participantStats?: {
                 validators: number;
             };
+            documentStats?: {
+                signed: number;
+                total: number;
+            };
             editable: boolean;
             emailBounced: boolean;
             valid: boolean;
@@ -3623,6 +3975,44 @@ export type ListDocumentSignatoriesControllerRunResponses = {
 };
 
 export type ListDocumentSignatoriesControllerRunResponse = ListDocumentSignatoriesControllerRunResponses[keyof ListDocumentSignatoriesControllerRunResponses];
+
+export type ListSignatoryDocumentsControllerRunData = {
+    body?: never;
+    path: {
+        caseFileId: string;
+        requestId: string;
+        signatoryId: string;
+    };
+    query?: {
+        filter?: {
+            id?: string;
+        };
+        order?: {
+            createdAt?: 'ASC' | 'DESC';
+        };
+        page?: {
+            number: number;
+            size: number;
+        };
+    };
+    url: '/case-files/{caseFileId}/signature-requests/{requestId}/signatories/{signatoryId}/documents';
+};
+
+export type ListSignatoryDocumentsControllerRunResponses = {
+    200: {
+        data?: Array<{
+            id: string;
+            fileName: string;
+            fileSize?: number;
+            status: 'PENDING' | 'READY_TO_SIGN' | 'SIGNED' | 'REJECTED';
+        }>;
+        meta?: {
+            totalElements?: number;
+        };
+    };
+};
+
+export type ListSignatoryDocumentsControllerRunResponse = ListSignatoryDocumentsControllerRunResponses[keyof ListSignatoryDocumentsControllerRunResponses];
 
 export type ListSignatoryValidatorsFromDocumentWithLinkedFlagControllerRunData = {
     body?: never;
@@ -4192,7 +4582,7 @@ export type ShowProfileControllerRunResponses = {
         onboardingShown: boolean;
         certifierStripeCustomerExists: boolean;
         loginInfo: {
-            type: 'Password' | 'OpenId';
+            type: 'Password' | 'OpenId' | 'UserKey';
             issuer?: string;
             clientId?: string;
         };
@@ -4200,6 +4590,8 @@ export type ShowProfileControllerRunResponses = {
             evidences: boolean;
             idVerifications: boolean;
             notifications: boolean;
+            chats: boolean;
+            signatures: boolean;
         };
     };
 };
@@ -4247,6 +4639,8 @@ export type ShowUserControllerRunResponses = {
             evidences: boolean;
             notifications: boolean;
             idVerifications: boolean;
+            chats: boolean;
+            signatures: boolean;
         };
     };
 };
@@ -4284,6 +4678,7 @@ export type UpdateAllUserPermitsByCompanyControllerRunData = {
         evidences?: boolean;
         idVerifications?: boolean;
         notifications?: boolean;
+        signatures?: boolean;
     };
     path: {
         companyId: string;
@@ -4303,6 +4698,7 @@ export type UpdateUserPermitControllerRunData = {
         evidences?: boolean;
         idVerifications?: boolean;
         notifications?: boolean;
+        signatures?: boolean;
     };
     path: {
         id: string;
