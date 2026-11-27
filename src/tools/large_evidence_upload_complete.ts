@@ -18,7 +18,7 @@ const inputSchema = z.object({
 export const large_evidence_upload_complete = defineTool({
   name: "large_evidence_upload_complete",
   description:
-    "Finalize a multipart evidence upload and register the evidence in the group. Returns immediately — the evidence transitions asynchronously to COMPLETED. Poll evidence_list until status is COMPLETED before sealing the group.",
+    "Files a request to CLOSE THE WHOLE EVIDENCE GROUP; it does not finish, upload or seal any single upload. Fields: id (new UUID v4 for the request), userAgent (optional). Returns nothing. The request stays pending until a large upload in the group ends — finishes, is cancelled, or has its evidence deleted — and the platform then closes the group as evidence_seal does, if the group holds at least one evidence. So call it only while another large upload in the group is still running; with none running, close the group with evidence_seal instead (a request filed then would close the group later, unasked, when the next large upload in it ends). Closing is irreversible: confirm with your user first. Requires: caseFileId and evidenceGroupId of a group you created.",
   inputSchema,
   annotations: {
     title: "Large Evidence Upload Complete",
@@ -33,7 +33,7 @@ export const large_evidence_upload_complete = defineTool({
     const token = ctx.auth?.token ?? "";
     const sdkClient = createClient(
       createConfig({
-        baseUrl: process.env.MCP_API_BASE_URL ?? "",
+        baseUrl: process.env.MCP_API_BASE_URL ?? "https://api-eadcustody.eadtrust.gocertius.io",
         headers: {
           Authorization: `Bearer ${token}`,
           ...(ctx.correlationId ? { "X-Correlation-Id": ctx.correlationId } : {}),

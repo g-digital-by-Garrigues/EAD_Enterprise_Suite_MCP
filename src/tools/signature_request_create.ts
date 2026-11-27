@@ -17,7 +17,7 @@ const inputSchema = rawInputSchema;
 
 export const signature_request_create = defineTool({
   name: "signature_request_create",
-  description: "Creates a new signature request in DRAFT status. Requires: case_file_create → caseFileId. Generate a UUID v4 for `id`. Set deadline as ISO 8601 datetime (max ~30 days ahead). Returns requestId. Add documents with signature_request_add_document and participants with signature_participant_create before activating.",
+  description: "Creates a signature request in DRAFT status, step by step; signature_request_full does the whole flow (documents, signatories, positions, sending) in one call. Requires: case_file_create → caseFileId. YOU generate `id` (UUID v4): the call returns HTTP 201 with NO body, so that id is the requestId. name: up to 64 characters. deadline: ISO 8601 date-time, in the future and at most 31 days ahead. signatureType: INTERPOSITION (simple signature through a link), ADVANCED (the signer confirms with a one-time code sent to their mobile, so each signatory needs a phone) or WITH_CERTIFICATE (the signer's own digital certificate). sequence: PARALLEL (everyone signs at once) or CONFIGURABLE (signing rounds; see signature_group_list), only if your company's plan allows it (else 409 SignatureSequenceNotAllowed). closeCondition: ALL_REQUIRED (completes when everyone has signed) or PARTIAL_ALLOWED (completes once nothing is pending; a rejection does not block the others). dashboardUrl: ANONYMIZED (the default) or NONE, whether signers get a link to the co-signer dashboard. Then add documents with signature_request_add_document and participants with signature_participant_create, and send it with activate_signature_request.",
   inputSchema,
   annotations: {
     title: "Signature Request Create",

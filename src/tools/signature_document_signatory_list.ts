@@ -17,7 +17,7 @@ const inputSchema = rawInputSchema;
 
 export const signature_document_signatory_list = defineTool({
   name: "signature_document_signatory_list",
-  description: "Lists the SIGNATORIES of one document in a signature request, with each signatory's status on that document. Requires: signature_request_add_document → documentId, signature_request_create → requestId, case_file_create → caseFileId. Items are { id, groupId, email, firstName, lastName, status, coordinates, uniqueValidator, phonePrefix, phoneNumber, participantStats } and status is PENDING, READY_TO_SIGN, VALIDATING, SIGNED or REJECTED. Each `id` is a signatoryId. To check whether the DOCUMENT itself reached READY_TO_SIGN before activate_signature_request, use signature_request_get; after activation poll here until every signatory is SIGNED before signature_certificate_get.",
+  description: "Lists the SIGNATORIES of one document in a signature request, with each signatory's status on that document. Requires: signature_request_add_document → documentId, signature_request_create → requestId, case_file_create → caseFileId. Items are { id, groupId, email, firstName, lastName, status, coordinates, uniqueValidator, phonePrefix, phoneNumber, participantStats } and status is PENDING, READY_TO_SIGN, VALIDATING, SIGNED or REJECTED. Each `id` is the participant id — the one signature_coordinate_set takes. For the DOCUMENT's own processing status (READY_TO_SIGN before activation) use signature_document_list. Certificates are available once the whole request is COMPLETED (signature_request_get).",
   inputSchema,
   annotations: {
     title: "Signature Document Signatory List",
@@ -27,7 +27,7 @@ export const signature_document_signatory_list = defineTool({
     openWorldHint: false,
   },
   pollable: false,
-  idempotencyWindowSeconds: 60,
+  idempotencyWindowSeconds: 0,
   async execute(input, ctx) {
     const token = ctx.auth?.token ?? "";
     const sdkClient = createClient(

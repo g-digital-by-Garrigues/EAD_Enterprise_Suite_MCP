@@ -15,7 +15,7 @@ const inputSchema = rawInputSchema;
 
 export const case_file_create = defineTool({
   name: "case_file_create",
-  description: "Creates a new case file — the top-level container for all related operations (evidence, notifications, signatures, dossiers). Call this first before any other operation. Generate a UUID v4 for `id`. Returns caseFileId needed for all subsequent calls.",
+  description: "Creates a case file, the top-level container for evidence, signatures, notifications and dossiers. Generate a UUID v4 for `id`: the API returns no body, so that `id` IS the caseFileId later calls need. Take `useCaseId` from use_case_list (not the Personal use case: each account has one personal case file already, so it answers 422 personalCaseFileAlreadyExists); it must be enabled for your company.",
   inputSchema,
   annotations: {
     title: "Case File Create",

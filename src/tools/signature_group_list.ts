@@ -17,7 +17,7 @@ const inputSchema = rawInputSchema;
 
 export const signature_group_list = defineTool({
   name: "signature_group_list",
-  description: "Lists all signing order groups of a CONFIGURABLE signature request. Returns id, type (Document/Signatory/DocumentSignatory), index, and documentId for each group. Call immediately after signature_request_create to retrieve the pre-created index:1 group IDs before adding documents or participants.",
+  description: "Lists all signing order groups of a CONFIGURABLE signature request (403 for any other sequence). Returns id, type (Document/Signatory/DocumentSignatory), index, and documentId for each group. On a CONFIGURABLE request, call it right after signature_request_create to retrieve the pre-created index:1 group IDs before adding documents or participants.",
   inputSchema,
   annotations: {
     title: "Signature Group List",
@@ -27,7 +27,7 @@ export const signature_group_list = defineTool({
     openWorldHint: false,
   },
   pollable: false,
-  idempotencyWindowSeconds: 60,
+  idempotencyWindowSeconds: 0,
   async execute(input, ctx) {
     const token = ctx.auth?.token ?? "";
     const sdkClient = createClient(

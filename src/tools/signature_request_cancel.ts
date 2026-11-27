@@ -15,12 +15,12 @@ const inputSchema = rawInputSchema;
 
 export const signature_request_cancel = defineTool({
   name: "signature_request_cancel",
-  description: "Cancels an active signature request. Requires: activate_signature_request (ACTIVE status), requestId, caseFileId. Transitions to CANCELLED. Cannot be undone.",
+  description: "Cancels a signature request that is ACTIVE, PARTIALLY_SIGNED or REJECTED (refused with 403 in any other status, DRAFT included): it becomes CANCELLED at once and the signing stops. Nothing can be downloaded afterwards: signed documents and certificates exist only for COMPLETED or COMPLETED_MANUAL requests. Irreversible: confirm with your user first. To end the signing early but keep what was already signed, use signature_request_close instead. Requires: case_file_create → caseFileId, signature_request_create → requestId. Returns no body.",
   inputSchema,
   annotations: {
     title: "Signature Request Cancel",
     readOnlyHint: false,
-    destructiveHint: false,
+    destructiveHint: true,
     idempotentHint: false,
     openWorldHint: false,
   },

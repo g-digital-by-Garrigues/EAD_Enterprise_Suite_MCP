@@ -4,6 +4,40 @@ export type ClientOptions = {
     baseUrl: string;
 };
 
+export type CreateEadtrustIdSessionControllerRunData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/eadtrust-id/session';
+};
+
+export type CreateEadtrustIdSessionControllerRunResponses = {
+    201: {
+        jwt: string;
+    };
+};
+
+export type CreateEadtrustIdSessionControllerRunResponse = CreateEadtrustIdSessionControllerRunResponses[keyof CreateEadtrustIdSessionControllerRunResponses];
+
+export type CreateEadtrustIdSessionWithLegalTextsControllerRunData = {
+    body: {
+        legalTextLanguage: 'en_GB' | 'es_ES';
+        acceptServiceTermId?: string;
+        acceptPrivacyPolicyId?: string;
+    };
+    path?: never;
+    query?: never;
+    url: '/eadtrust-id/session-with-legal-texts';
+};
+
+export type CreateEadtrustIdSessionWithLegalTextsControllerRunResponses = {
+    201: {
+        jwt: string;
+    };
+};
+
+export type CreateEadtrustIdSessionWithLegalTextsControllerRunResponse = CreateEadtrustIdSessionWithLegalTextsControllerRunResponses[keyof CreateEadtrustIdSessionWithLegalTextsControllerRunResponses];
+
 export type CreateOpenIdSessionControllerRunData = {
     body?: never;
     path?: never;
@@ -525,6 +559,7 @@ export type CreateDossierControllerRunData = {
         validityFrom: string;
         validityTo: string;
         accessToken?: string;
+        embeddedEvidences?: boolean;
     };
     path: {
         caseFileId: string;
@@ -623,6 +658,7 @@ export type ShowDossierControllerRunResponses = {
             lastName: string;
         };
         accessToken?: string;
+        embeddedEvidences: boolean;
         evidenceStats: {
             total: number;
             completed: number;
@@ -654,6 +690,7 @@ export type UpdateDossierControllerRunData = {
         validityFrom?: string;
         validityTo?: string;
         accessToken?: string;
+        embeddedEvidences?: boolean;
     };
     path: {
         caseFileId: string;
@@ -1977,134 +2014,6 @@ export type UploadUrlEvidenceControllerRunResponses = {
 
 export type UploadUrlEvidenceControllerRunResponse = UploadUrlEvidenceControllerRunResponses[keyof UploadUrlEvidenceControllerRunResponses];
 
-export type CreatePresentialIdVerificationControllerRunData = {
-    body: {
-        id: string;
-        name: string;
-        firstSurname: string;
-        secondSurname?: string;
-        documentType: 'DNI';
-        documentNumber: string;
-        email: string;
-        phonePrefix: string;
-        phoneNumber: string;
-        purpose?: 'SOFTWARE';
-        identificationType?: 'PRESENTIAL' | 'VIDEO';
-        documentFrontSideImage?: {
-            [key: string]: unknown;
-        };
-        documentBackSideImage?: {
-            [key: string]: unknown;
-        };
-    };
-    path?: never;
-    query?: never;
-    url: '/presential-id-verifications';
-};
-
-export type CreatePresentialIdVerificationControllerRunResponses = {
-    201: unknown;
-};
-
-export type CreateVideoIdVerificationControllerRunData = {
-    body: {
-        id: string;
-        name: string;
-        firstSurname: string;
-        secondSurname?: string;
-        email: string;
-        phonePrefix: string;
-        phoneNumber: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/video-id-verifications';
-};
-
-export type CreateVideoIdVerificationControllerRunResponses = {
-    201: unknown;
-};
-
-export type DownloadIdVerificationContractControllerRunData = {
-    body?: never;
-    path: {
-        verificationId: string;
-    };
-    query?: never;
-    url: '/id-verifications/{verificationId}/download-contract';
-};
-
-export type DownloadIdVerificationContractControllerRunResponses = {
-    200: unknown;
-};
-
-export type ListIdVerificationsControllerRunData = {
-    body?: never;
-    path: {
-        userId: string;
-    };
-    query?: {
-        filter?: {
-            email?: string;
-            status?: 'CREATED' | 'UNDER_REVIEW' | 'COMPLETED' | 'REJECTED';
-            statuses?: Array<'CREATED' | 'UNDER_REVIEW' | 'COMPLETED' | 'REJECTED'>;
-            identificationType?: 'PRESENTIAL' | 'VIDEO';
-        };
-        order?: {
-            createdAt?: 'ASC' | 'DESC';
-        };
-        page?: {
-            number: number;
-            size: number;
-        };
-    };
-    url: '/users/{userId}/id-verifications';
-};
-
-export type ListIdVerificationsControllerRunResponses = {
-    200: {
-        data?: Array<{
-            id: string;
-            email: string;
-            name: string;
-            firstSurname: string;
-            secondSurname?: string;
-            status: 'CREATED' | 'UNDER_REVIEW' | 'COMPLETED' | 'REJECTED';
-            createdAt: string;
-            rejectedReason?: 'INVALID_DNI_FRONT' | 'INVALID_DNI_BACK' | 'DNI_EXPIRED' | 'DATA_MISMATCH' | 'DUPLICATE_REQUEST' | 'OTHER';
-            rejectedContext?: string;
-            identificationType: 'PRESENTIAL' | 'VIDEO';
-            createdBy: {
-                id: string;
-                firstName: string;
-                lastName: string;
-                email: string;
-            };
-        }>;
-        meta?: {
-            totalElements?: number;
-        };
-    };
-};
-
-export type ListIdVerificationsControllerRunResponse = ListIdVerificationsControllerRunResponses[keyof ListIdVerificationsControllerRunResponses];
-
-export type SignIdVerificationContractControllerRunData = {
-    body: {
-        applicantOtp: string;
-        operatorOtp: string;
-    };
-    path: {
-        verificationId: string;
-    };
-    query?: never;
-    url: '/id-verifications/{verificationId}/sign-contract';
-};
-
-export type SignIdVerificationContractControllerRunResponses = {
-    200: unknown;
-};
-
 export type CancelLargeEvidenceUploadControllerRunData = {
     body?: never;
     path: {
@@ -2921,6 +2830,86 @@ export type UpdateNotificationRequestCaseFileIdControllerRunResponses = {
     200: unknown;
 };
 
+export type ShowSettingsControllerRunData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/settings';
+};
+
+export type ShowSettingsControllerRunResponses = {
+    200: {
+        nameApp: string;
+        assetsUrl: string;
+        maxEvidenceSizeMB: number;
+        largeEvidenceChunkSizeMB: number;
+        maxLargeEvidenceSizeMB: number;
+        maxNotificationDocumentSizeMB: number;
+        defaultCertificateValidityYears: number;
+        maxDossierEvidences: number;
+        onboardingType: 'Steps' | 'PdfManual';
+        evidencesWebComponent: 'CaseFiles' | 'DossiersWithCaseFiles';
+        eadtrustIdStage: 'Disabled' | 'Enabled';
+        eadtrustIdIssuer: string;
+        eadtrustIdClientFront: string;
+        brandColors: {
+            brandLighter: string;
+            brandLight: string;
+            brand: string;
+            brandDark: string;
+            brandDarker: string;
+            brandSecondary: string;
+        };
+        featureFlags: {
+            chats: boolean;
+            mobileApps: boolean;
+            freemiumRegistrations: boolean;
+            onboarding: boolean;
+            largeEvidenceUploads: boolean;
+            signatures: boolean;
+            notifications: boolean;
+            manageMassiveNotificationReceivers: boolean;
+            manageMassiveSignatureParticipants: boolean;
+            sendNotificationSmsUrl: boolean;
+            sendSignatureSmsUrl: boolean;
+            scascExperiment: boolean;
+            userPermits: boolean;
+            userPermitEvidences: boolean;
+            togglableEmbeddedEvidences: boolean;
+            signatureTypeWithCertificate: boolean;
+        };
+        evidencesAsFirstMenuItem: boolean;
+        menuItemsTranslations: Array<{
+            language: 'en_GB' | 'es_ES';
+            evidences: string;
+            chats: string;
+            signatures: string;
+            idVerifications: string;
+            users: string;
+            notifications: string;
+        }>;
+    };
+};
+
+export type ShowSettingsControllerRunResponse = ShowSettingsControllerRunResponses[keyof ShowSettingsControllerRunResponses];
+
+export type ShowFeatureFlagsControllerRunData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/feature-flags';
+};
+
+export type ShowFeatureFlagsControllerRunResponses = {
+    200: {
+        chats: boolean;
+        mobileApps: boolean;
+        freemiumRegistrations: boolean;
+    };
+};
+
+export type ShowFeatureFlagsControllerRunResponse = ShowFeatureFlagsControllerRunResponses[keyof ShowFeatureFlagsControllerRunResponses];
+
 export type ListSignaturePartialCertificatesControllerRunData = {
     body?: never;
     path: {
@@ -3442,6 +3431,8 @@ export type ListSignatureParticipantsControllerRunResponses = {
             lastName?: string;
             email?: string;
             createdAt: string;
+            sendWaUrl: boolean;
+            sendSmsUrl: boolean;
             phoneNumber?: string;
             phonePrefix?: string;
             participantStats?: {
@@ -3473,6 +3464,8 @@ export type CreateSignatureParticipantControllerRunData = {
         lastName: string;
         email: string;
         linkToAllDocuments?: boolean;
+        sendWaUrl?: boolean;
+        sendSmsUrl?: boolean;
         phoneNumber?: string;
         phonePrefix?: string;
     };
@@ -3561,7 +3554,7 @@ export type CreateSignatureRequestControllerRunData = {
         id: string;
         name: string;
         language: 'en_GB' | 'es_ES';
-        signatureType?: 'INTERPOSITION' | 'ADVANCED';
+        signatureType?: 'INTERPOSITION' | 'ADVANCED' | 'WITH_CERTIFICATE';
         dashboardUrl?: 'NONE' | 'ANONYMIZED';
         sequence?: 'PARALLEL' | 'CONFIGURABLE';
         deadline: string;
@@ -3745,7 +3738,7 @@ export type ShowSignatureRequestControllerRunResponses = {
         language: string;
         status: 'CREATING' | 'DRAFT' | 'ACTIVE' | 'PARTIALLY_SIGNED' | 'FULLY_SIGNED' | 'CANCELLED' | 'COMPLETED' | 'REJECTED' | 'CLOSING' | 'COMPLETED_MANUAL';
         createdAt: string;
-        signatureType: 'INTERPOSITION' | 'ADVANCED';
+        signatureType: 'INTERPOSITION' | 'ADVANCED' | 'WITH_CERTIFICATE';
         dashboardUrl: 'NONE' | 'ANONYMIZED';
         sequence: 'PARALLEL' | 'CONFIGURABLE';
         activatedAt?: string;
@@ -3962,6 +3955,8 @@ export type ListDocumentSignatoriesControllerRunResponses = {
                 y: number;
             }>;
             uniqueValidator: boolean;
+            sendWaUrl: boolean;
+            sendSmsUrl: boolean;
             phoneNumber?: string;
             phonePrefix?: string;
             participantStats: {
@@ -4574,9 +4569,10 @@ export type ShowProfileControllerRunResponses = {
         lastName: string;
         confirmedAt?: string;
         companyId: string;
+        companyName?: string;
         companyVerified: boolean;
         companyCorporate: boolean;
-        companyName?: string;
+        companyExternalIdentity: boolean;
         defaultCaseFileId?: string;
         language: string;
         onboardingShown: boolean;
