@@ -15,7 +15,7 @@ const inputSchema = rawInputSchema;
 
 export const large_evidence_upload_get = defineTool({
   name: "large_evidence_upload_get",
-  description: "Reports how much of a large evidence upload the platform has actually received. Requires: caseFileId, evidenceGroupId and the evidence id. Returns fileName, totalSizeMB, chunkSizeMB and biggestUploadedOffset — compare biggestUploadedOffset against totalSizeMB to decide whether every part landed before calling large_evidence_upload_complete. Use it to resume or diagnose a stalled upload.",
+  description: "Reports how much of a large evidence upload the platform has received. Requires: caseFileId, evidenceGroupId and, as id, the EVIDENCE id (large_evidence_upload → evidenceId). Returns id (the upload id), evidenceId, fileName, totalSizeMB, chunkSizeMB and biggestUploadedOffset (highest chunk index received, from 0; -1 = none yet). Answers 404 once the platform has finished the evidence (it then removes the upload record — check the evidence with evidence_get) or after the upload was cancelled. To continue an unfinished upload, call large_evidence_upload with this evidenceId and the same file.",
   inputSchema,
   annotations: {
     title: "Large Evidence Upload Get",
@@ -25,7 +25,7 @@ export const large_evidence_upload_get = defineTool({
     openWorldHint: false,
   },
   pollable: false,
-  idempotencyWindowSeconds: 60,
+  idempotencyWindowSeconds: 0,
   async execute(input, ctx) {
     const token = ctx.auth?.token ?? "";
     const sdkClient = createClient(

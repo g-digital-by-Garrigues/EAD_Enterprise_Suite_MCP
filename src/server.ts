@@ -8,6 +8,12 @@ import { evidence_seal } from "./tools/evidence_seal.js";
 import { evidence_get } from "./tools/evidence_get.js";
 import { evidence_group_create } from "./tools/evidence_group_create.js";
 import { evidence_group_list } from "./tools/evidence_group_list.js";
+import { evidence_group_get } from "./tools/evidence_group_get.js";
+import { evidence_group_update } from "./tools/evidence_group_update.js";
+import { evidence_group_delete } from "./tools/evidence_group_delete.js";
+import { evidence_download_url } from "./tools/evidence_download_url.js";
+import { evidence_update } from "./tools/evidence_update.js";
+import { evidence_delete } from "./tools/evidence_delete.js";
 import { dossier_create } from "./tools/dossier_create.js";
 import { dossier_update } from "./tools/dossier_update.js";
 import { dossier_certify } from "./tools/dossier_certify.js";
@@ -52,14 +58,11 @@ import { notification_certificate_package_url } from "./tools/notification_certi
 import { case_file_create } from "./tools/case_file_create.js";
 import { case_file_list } from "./tools/case_file_list.js";
 import { case_file_get } from "./tools/case_file_get.js";
-import { case_file_delete } from "./tools/case_file_delete.js";
+import { case_file_update } from "./tools/case_file_update.js";
 import { session_login } from "./tools/session_login.js";
 import { session_info } from "./tools/session_info.js";
 import { profile_get } from "./tools/profile_get.js";
 import { use_case_list } from "./tools/use_case_list.js";
-import { id_verification_video_create } from "./tools/id_verification_video_create.js";
-import { id_verification_list } from "./tools/id_verification_list.js";
-import { id_verification_contract_url } from "./tools/id_verification_contract_url.js";
 import { signature_group_create } from "./tools/signature_group_create.js";
 import { signature_group_list } from "./tools/signature_group_list.js";
 import { signature_request_create } from "./tools/signature_request_create.js";
@@ -82,12 +85,20 @@ import { signature_validator_unassign } from "./tools/signature_validator_unassi
 import { activate_signature_request } from "./tools/activate_signature_request.js";
 import { signature_coordinate_set } from "./tools/signature_coordinate_set.js";
 import { signature_certificate_get } from "./tools/signature_certificate_get.js";
+import { signature_request_list } from "./tools/signature_request_list.js";
+import { signature_document_signed_url } from "./tools/signature_document_signed_url.js";
+import { signature_certificate_package_url } from "./tools/signature_certificate_package_url.js";
+import { signature_request_resend } from "./tools/signature_request_resend.js";
+import { signature_request_close } from "./tools/signature_request_close.js";
 import { large_evidence_upload_initiate } from "./tools/large_evidence_upload_initiate.js";
 import { large_evidence_upload_complete } from "./tools/large_evidence_upload_complete.js";
 import { large_evidence_upload_get } from "./tools/large_evidence_upload_get.js";
+import { large_evidence_upload_cancel } from "./tools/large_evidence_upload_cancel.js";
 import { evidence_upload } from "./tools/evidence_upload.js";
 import { notification_send } from "./tools/notification_send.js";
 import { notification_send_with_attachments } from "./tools/notification_send_with_attachments.js";
+import { signature_request_full } from "./tools/signature_request_full.js";
+import { large_evidence_upload } from "./tools/large_evidence_upload.js";
 
 await createServer({
   name: "io.github.g-digital-by-Garrigues/ead-enterprise-suite",
@@ -99,6 +110,12 @@ evidence_seal,
 evidence_get,
 evidence_group_create,
 evidence_group_list,
+evidence_group_get,
+evidence_group_update,
+evidence_group_delete,
+evidence_download_url,
+evidence_update,
+evidence_delete,
 dossier_create,
 dossier_update,
 dossier_certify,
@@ -143,14 +160,11 @@ notification_certificate_package_url,
 case_file_create,
 case_file_list,
 case_file_get,
-case_file_delete,
+case_file_update,
 session_login,
 session_info,
 profile_get,
 use_case_list,
-id_verification_video_create,
-id_verification_list,
-id_verification_contract_url,
 signature_group_create,
 signature_group_list,
 signature_request_create,
@@ -173,11 +187,19 @@ signature_validator_unassign,
 activate_signature_request,
 signature_coordinate_set,
 signature_certificate_get,
+signature_request_list,
+signature_document_signed_url,
+signature_certificate_package_url,
+signature_request_resend,
+signature_request_close,
 large_evidence_upload_initiate,
 large_evidence_upload_complete,
 large_evidence_upload_get,
+large_evidence_upload_cancel,
 evidence_upload,
 notification_send,
 notification_send_with_attachments,
+signature_request_full,
+large_evidence_upload,
   ],
 });

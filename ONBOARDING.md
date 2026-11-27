@@ -6,7 +6,7 @@ Get from zero to your first tool call in under 5 minutes.
 
 ## Step 1 — Get your credentials
 
-Visit [https://www.eadtrust.eu/soluciones-legaltech/enterprise-suite/](https://www.eadtrust.eu/soluciones-legaltech/enterprise-suite/) to create an account or obtain API credentials.
+Visit [https://www.eadtrust.eu/soluciones-legaltech/enterprise-suite/](https://www.eadtrust.eu/soluciones-legaltech/enterprise-suite/) to request or obtain your API credentials.
 
 You will need a **user key** — a long-lived key issued in the product, exchanged automatically for a short-lived session token.
 

@@ -13,7 +13,7 @@ const inputSchema = rawInputSchema;
 
 export const profile_get = defineTool({
   name: "profile_get",
-  description: "Returns the authenticated user's own profile. It identifies the caller from the session token alone — no email or any other input needed — so it works on every deployment, including a per-request Bearer one. Its `id` field IS your userId (UUID): the value required by case_file_list and every /users/{userId}/... operation. Prefer this over session_info when you need the userId: it is the canonical source. Also returns companyId (needed to subscribe to the notifications SSE stream) and defaultCaseFileId. Also returns `permit`, a set of booleans — { evidences, idVerifications, notifications, chats, signatures } — that says which tool families this account may use at all: a false entry means every tool in that family returns 403 regardless of inputs, and no retry or different argument will help. Read it before calling into a family for the first time; on the integration deployment checked on 2026-09-07, permit.idVerifications was false and every identity tool returned 403 NoIdVerificationsPermit. No parameters.",
+  description: "Returns the authenticated user's own profile. It identifies the caller from the session token alone — no email or any other input needed — so it works on every deployment, including a per-request Bearer one. Its `id` field IS your userId (UUID): the value required by case_file_list and every /users/{userId}/... operation. Prefer this over session_info when you need the userId: it is the canonical source. Also returns companyId (needed to subscribe to the notifications SSE stream) and defaultCaseFileId. Also returns `permit`, a set of booleans — { evidences, idVerifications, notifications, chats, signatures } — that says which tool families this account may use at all: a false entry means every tool in that family returns 403 regardless of inputs, and no retry or different argument will help. Read it before calling into a family for the first time. No parameters.",
   inputSchema,
   annotations: {
     title: "Profile Get",
@@ -23,7 +23,7 @@ export const profile_get = defineTool({
     openWorldHint: false,
   },
   pollable: false,
-  idempotencyWindowSeconds: 60,
+  idempotencyWindowSeconds: 0,
   async execute(input, ctx) {
     const token = ctx.auth?.token ?? "";
     const sdkClient = createClient(

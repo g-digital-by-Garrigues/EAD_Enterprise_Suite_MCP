@@ -17,7 +17,7 @@ const inputSchema = rawInputSchema;
 
 export const signature_coordinate_set = defineTool({
   name: "signature_coordinate_set",
-  description: "Sets the visual position of the signature field on a PDF document page. Required for PDF documents before activation, for both INTERPOSITION and ADVANCED signatures. Requires: signature_participant_create → signatoryId, signature_request_add_document → documentId, signature_request_create → requestId, case_file_create → caseFileId. Provide coordinates as array of {page (1-based), x (points from left), y (points from bottom)}. Set coordinates after the document has been uploaded and before activate_signature_request.",
+  description: "Sets where a signatory signs on one document: coordinates is an array of {page (from 1), x, y} — x/y in PDF points from the page's bottom-left corner, (x, y) being the bottom-left corner of the signature stamp, which occupies x+15..x+104 by y..y+66.5 (measured live 2026-11-26; see the signature guide). A page the PDF does not have is not refused: a blank page is appended and signed. Required at activation on every PDF, and every .docx sent with convertToPdf, for every signatory linked to it — whatever the signature type; other files need none. signatoryId is the participant id (the id you gave signature_participant_create); the call replaces that signatory's positions on that document, so it is safe to repeat, and works any time while the request is DRAFT once the signatory is linked to the document. Requires: signature_request_add_document → documentId, signature_request_create → requestId, case_file_create → caseFileId.",
   inputSchema,
   annotations: {
     title: "Signature Coordinate Set",

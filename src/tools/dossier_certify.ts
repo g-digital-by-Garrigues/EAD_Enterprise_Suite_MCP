@@ -15,7 +15,7 @@ const inputSchema = rawInputSchema;
 
 export const dossier_certify = defineTool({
   name: "dossier_certify",
-  description: "Certifies a dossier, generating a tamper-evident PDF and locking all linked evidence. Requires: dossier_create → dossierId, dossier_evidence_link (evidence linked), case_file_create → caseFileId. ASYNC: transitions DRAFT → CERTIFYING → CERTIFIED. Poll dossier_list until dossierId status === CERTIFIED.",
+  description: "Certifies a DRAFT dossier, generating its certificate (403 if not DRAFT; also 403 if you are not the dossier's owner or lack the editor role on the case file). Requires: dossierId, caseFileId, and at least one evidence linked with dossier_evidence_link, all COMPLETED and no more than the platform's maximum, else 409. ASYNC: DRAFT → CERTIFYING → CERTIFIED, or back to DRAFT if certification fails (then call it again); poll dossier_get until CERTIFIED, then download with dossier_document_url. For one evidence group, dossier_group_certify creates and certifies in one call.",
   inputSchema,
   annotations: {
     title: "Dossier Certify",

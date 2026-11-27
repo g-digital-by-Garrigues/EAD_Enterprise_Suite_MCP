@@ -15,7 +15,7 @@ const inputSchema = rawInputSchema;
 
 export const signature_request_get = defineTool({
   name: "signature_request_get",
-  description: "Retrieves full details of a signature request. Requires: signature_request_create → requestId, case_file_create → caseFileId. Returns status, documents, participants, deadline, and history. Use to check overall process state.",
+  description: "Retrieves one signature request: its status (CREATING, DRAFT, ACTIVE, PARTIALLY_SIGNED, FULLY_SIGNED, COMPLETED, COMPLETED_MANUAL, CLOSING, REJECTED or CANCELLED), name, deadline, signature type, close condition and signatory/observer/validator counts. It does NOT include the documents or their processing status — use signature_document_list — nor the people — use signature_participant_list. Requires: signature_request_create → requestId, case_file_create → caseFileId.",
   inputSchema,
   annotations: {
     title: "Signature Request Get",
@@ -25,7 +25,7 @@ export const signature_request_get = defineTool({
     openWorldHint: false,
   },
   pollable: false,
-  idempotencyWindowSeconds: 60,
+  idempotencyWindowSeconds: 0,
   async execute(input, ctx) {
     const token = ctx.auth?.token ?? "";
     const sdkClient = createClient(

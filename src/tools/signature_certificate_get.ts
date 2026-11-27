@@ -15,7 +15,7 @@ const inputSchema = rawInputSchema;
 
 export const signature_certificate_get = defineTool({
   name: "signature_certificate_get",
-  description: "Retrieves the signed document certificate PDF. Requires: activate_signature_request (document fully SIGNED), signature_request_add_document → documentId, signature_request_create → requestId, case_file_create → caseFileId. Returns documentUrl (signed PDF certificate). ASYNC: poll until documentUrl is available.",
+  description: "Retrieves the signature certificate of one document: documentUrl, a temporary link to the certificate PDF. Available only once the WHOLE request is COMPLETED (or COMPLETED_MANUAL) — check with signature_request_get; before that the platform refuses (403). Requires: signature_request_add_document → documentId, signature_request_create → requestId, case_file_create → caseFileId.",
   inputSchema,
   annotations: {
     title: "Signature Certificate Get",
@@ -25,7 +25,7 @@ export const signature_certificate_get = defineTool({
     openWorldHint: false,
   },
   pollable: false,
-  idempotencyWindowSeconds: 60,
+  idempotencyWindowSeconds: 0,
   async execute(input, ctx) {
     const token = ctx.auth?.token ?? "";
     const sdkClient = createClient(

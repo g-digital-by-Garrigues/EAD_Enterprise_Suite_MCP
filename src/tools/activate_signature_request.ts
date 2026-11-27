@@ -15,14 +15,14 @@ const inputSchema = rawInputSchema;
 
 export const activate_signature_request = defineTool({
   name: "activate_signature_request",
-  description: "Activates a signature request, transitioning from DRAFT to ACTIVE and sending signing invitations to all signatories. Do NOT call this immediately after uploading files. Activation preconditions: request is DRAFT; at least one SIGNATORY exists; every document has been uploaded to its presigned URL; backend processing has had time to complete for every uploaded document (use processed/READY_TO_SIGN from signature_request_get when exposed; otherwise wait after the successful PUT); and PDF documents have signature coordinates set for every required signatory. INTERPOSITION may send a simple signing link, including WhatsApp when available/configured; ADVANCED uses phonePrefix/phoneNumber for OTP and currently does not support WhatsApp delivery. IRREVERSIBLE: cannot add documents or participants after activation. ASYNC: after activation, poll signature_request_get until status is ACTIVE, then use signature_document_signatory_list with documentId to monitor each signatory, or signature_document_list for the request's documents and their aggregate signatoryStatusStats; call signature_certificate_get only after the document is SIGNED.",
+  description: "Sends a DRAFT signature request to its signers (DRAFT → ACTIVE): every signatory receives the invitation. IRREVERSIBLE — confirm with your user first; no documents or participants can be added afterwards. The platform checks: at least one SIGNATORY; every document READY_TO_SIGN (signature_document_list — a document still PENDING or in ERROR makes activation fail with an opaque 504); every PDF, and every .docx sent with convertToPdf, has a position for every signatory linked to it, whatever the signature type (else 409 SignatoriesWithoutCoordinates; signature_document_list's signatoryCoordinatesStats.missing shows it); no participant marked invalid (409 InvalidParticipants). INTERPOSITION may also send the link by WhatsApp/SMS; ADVANCED sends a one-time code to each signatory's mobile. Follow it with signature_signatory_progress_list or signature_document_signatory_list; once the request is COMPLETED, get each document's certificate with signature_certificate_get. Requires: signature_request_create → requestId, case_file_create → caseFileId. To create and send in one call, use signature_request_full.",
   inputSchema,
   annotations: {
     title: "Activate Signature Request",
     readOnlyHint: false,
     destructiveHint: false,
     idempotentHint: false,
-    openWorldHint: false,
+    openWorldHint: true,
   },
   pollable: false,
   idempotencyWindowSeconds: 60,

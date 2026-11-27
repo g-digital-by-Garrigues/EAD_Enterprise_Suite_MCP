@@ -18,7 +18,7 @@ session_info()  →  { userId: "<uuid>", type: "UserKey", accountLoginType: "Pas
 
 Save `userId` — you need it to list your case files.
 
-## Step 1 — Find your case file
+## Step 1 — Find or create your case file
 
 Every operation in EAD requires a `caseFileId`. Case files are workspaces that group all your documents and processes.
 
@@ -28,7 +28,7 @@ case_file_list(userId: "<uuid-from-session-info>")
 
 The response lists your case files. Use the `id` field (a UUID like `822def1b-dab2-496f-83ca-91f7bed2c1ab`), **not** the `code` (like `PR82`).
 
-> Case files are created in the EAD portal — they cannot be created via MCP. If you have no case file, contact your EAD administrator.
+If you need a new one: `case_file_create(id: "<new-uuid>", name, useCaseId)` — `useCaseId` from `use_case_list` or from an existing case file. The personal use case allows only one case file per account.
 
 ## Step 2 — Generate valid UUIDs
 
@@ -78,7 +78,7 @@ appears without the key having expired is worth reporting rather than retrying.
 | Not calling `session_login` first | 401 Unauthorized | Always authenticate before calling any other tool |
 | Invalid UUID in any `id` field | Validation error | 4th group must start with `8`, `9`, `a`, or `b` |
 | Calling `evidence_get` without `evidenceGroupId` | Missing required field error | `evidence_get` requires `caseFileId`, `evidenceGroupId`, AND `id` |
-| Leaving an evidence group unsealed | Group stays OPEN forever, never certified | Always call `evidence_seal` after adding all evidence items |
+| Leaving an evidence group unsealed | Group stays OPEN | Call `evidence_seal` after adding all evidence items — the API does not require it before linking or certifying, but it is advised |
 
 ## Quick reference
 
@@ -87,7 +87,11 @@ appears without the key having expired is worth reporting rather than retrying.
 | Authenticate | `session_login` |
 | List my case files | `case_file_list` (needs `userId`) |
 | Get a case file's details | `case_file_get` |
-| Start a signature workflow | See `/signature-lifecycle` |
+| Create a case file | `case_file_create` |
+| Rename a case file, or close / reopen it | `case_file_update` (`status: CLOSED` refuses new evidence groups and evidences until set back to `OPEN`) |
+| Get documents signed | `signature_request_full` (the whole request in one call) — see `/signature-lifecycle` |
 | Certify evidence | See `/evidence-lifecycle` |
+| Certify a file over 1 GiB | `large_evidence_upload` — local MCP (stdio) or Smithery only; not hosted over HTTP, Docker or n8n. See `/evidence-lifecycle` |
+| Fix, delete or download an evidence or group | `evidence_update`, `evidence_delete`, `evidence_download_url`, `evidence_group_get` / `_update` / `_delete` — see `/evidence-lifecycle` |
 | Send a certified notification | See `/notification-lifecycle` |
 | Create a certified dossier | See `/dossier-lifecycle` |

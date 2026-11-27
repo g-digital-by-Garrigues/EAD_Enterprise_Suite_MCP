@@ -2,6 +2,20 @@
 
 import * as z from 'zod';
 
+export const zCreateEadtrustIdSessionControllerRunResponse = z.object({
+    jwt: z.string()
+});
+
+export const zCreateEadtrustIdSessionWithLegalTextsControllerRunBody = z.object({
+    legalTextLanguage: z.enum(['en_GB', 'es_ES']),
+    acceptServiceTermId: z.string().optional(),
+    acceptPrivacyPolicyId: z.string().optional()
+});
+
+export const zCreateEadtrustIdSessionWithLegalTextsControllerRunResponse = z.object({
+    jwt: z.string()
+});
+
 export const zCreateOpenIdSessionControllerRunResponse = z.object({
     jwt: z.string()
 });
@@ -352,7 +366,8 @@ export const zCreateDossierControllerRunBody = z.object({
     filledFields: z.record(z.string(), z.unknown()).optional(),
     validityFrom: z.string(),
     validityTo: z.string(),
-    accessToken: z.string().optional()
+    accessToken: z.string().optional(),
+    embeddedEvidences: z.boolean().optional()
 });
 
 export const zCreateDossierControllerRunPath = z.object({
@@ -416,6 +431,7 @@ export const zShowDossierControllerRunResponse = z.object({
         lastName: z.string()
     }).optional(),
     accessToken: z.string().optional(),
+    embeddedEvidences: z.boolean(),
     evidenceStats: z.object({
         total: z.number(),
         completed: z.number(),
@@ -438,7 +454,8 @@ export const zUpdateDossierControllerRunBody = z.object({
     filledFields: z.record(z.string(), z.unknown()).optional(),
     validityFrom: z.string().optional(),
     validityTo: z.string().optional(),
-    accessToken: z.string().optional()
+    accessToken: z.string().optional(),
+    embeddedEvidences: z.boolean().optional()
 });
 
 export const zUpdateDossierControllerRunPath = z.object({
@@ -1490,111 +1507,6 @@ export const zUploadUrlEvidenceControllerRunResponse = z.object({
     expiration: z.string()
 });
 
-export const zCreatePresentialIdVerificationControllerRunBody = z.object({
-    id: z.uuid(),
-    name: z.string().max(25),
-    firstSurname: z.string().max(50),
-    secondSurname: z.string().max(50).optional(),
-    documentType: z.enum(['DNI']),
-    documentNumber: z.string(),
-    email: z.string(),
-    phonePrefix: z.string(),
-    phoneNumber: z.string(),
-    purpose: z.enum(['SOFTWARE']).optional(),
-    identificationType: z.enum(['PRESENTIAL', 'VIDEO']).optional(),
-    documentFrontSideImage: z.record(z.string(), z.unknown()).optional(),
-    documentBackSideImage: z.record(z.string(), z.unknown()).optional()
-});
-
-export const zCreateVideoIdVerificationControllerRunBody = z.object({
-    id: z.uuid(),
-    name: z.string().max(25),
-    firstSurname: z.string().max(50),
-    secondSurname: z.string().max(50).optional(),
-    email: z.string(),
-    phonePrefix: z.string(),
-    phoneNumber: z.string()
-});
-
-export const zDownloadIdVerificationContractControllerRunPath = z.object({
-    verificationId: z.string()
-});
-
-export const zListIdVerificationsControllerRunPath = z.object({
-    userId: z.string()
-});
-
-export const zListIdVerificationsControllerRunQuery = z.object({
-    filter: z.object({
-        email: z.string().optional(),
-        status: z.enum([
-            'CREATED',
-            'UNDER_REVIEW',
-            'COMPLETED',
-            'REJECTED'
-        ]).optional(),
-        statuses: z.array(z.enum([
-            'CREATED',
-            'UNDER_REVIEW',
-            'COMPLETED',
-            'REJECTED'
-        ])).optional(),
-        identificationType: z.enum(['PRESENTIAL', 'VIDEO']).optional()
-    }).optional(),
-    order: z.object({
-        createdAt: z.enum(['ASC', 'DESC']).optional()
-    }).optional(),
-    page: z.object({
-        number: z.number().gte(1).default(1),
-        size: z.number().gte(0).lte(100).default(20)
-    }).optional()
-});
-
-export const zListIdVerificationsControllerRunResponse = z.object({
-    data: z.array(z.object({
-        id: z.string(),
-        email: z.string(),
-        name: z.string(),
-        firstSurname: z.string(),
-        secondSurname: z.string().optional(),
-        status: z.enum([
-            'CREATED',
-            'UNDER_REVIEW',
-            'COMPLETED',
-            'REJECTED'
-        ]),
-        createdAt: z.string(),
-        rejectedReason: z.enum([
-            'INVALID_DNI_FRONT',
-            'INVALID_DNI_BACK',
-            'DNI_EXPIRED',
-            'DATA_MISMATCH',
-            'DUPLICATE_REQUEST',
-            'OTHER'
-        ]).optional(),
-        rejectedContext: z.string().optional(),
-        identificationType: z.enum(['PRESENTIAL', 'VIDEO']),
-        createdBy: z.object({
-            id: z.string(),
-            firstName: z.string(),
-            lastName: z.string(),
-            email: z.string()
-        })
-    })).optional(),
-    meta: z.object({
-        totalElements: z.number().optional()
-    }).optional()
-});
-
-export const zSignIdVerificationContractControllerRunBody = z.object({
-    applicantOtp: z.string(),
-    operatorOtp: z.string()
-});
-
-export const zSignIdVerificationContractControllerRunPath = z.object({
-    verificationId: z.string()
-});
-
 export const zCancelLargeEvidenceUploadControllerRunPath = z.object({
     caseFileId: z.string(),
     evidenceGroupId: z.string(),
@@ -2208,6 +2120,64 @@ export const zUpdateNotificationRequestCaseFileIdControllerRunPath = z.object({
     notificationRequestId: z.string()
 });
 
+export const zShowSettingsControllerRunResponse = z.object({
+    nameApp: z.string(),
+    assetsUrl: z.string(),
+    maxEvidenceSizeMB: z.number(),
+    largeEvidenceChunkSizeMB: z.number(),
+    maxLargeEvidenceSizeMB: z.number(),
+    maxNotificationDocumentSizeMB: z.number(),
+    defaultCertificateValidityYears: z.number(),
+    maxDossierEvidences: z.number(),
+    onboardingType: z.enum(['Steps', 'PdfManual']),
+    evidencesWebComponent: z.enum(['CaseFiles', 'DossiersWithCaseFiles']),
+    eadtrustIdStage: z.enum(['Disabled', 'Enabled']),
+    eadtrustIdIssuer: z.string(),
+    eadtrustIdClientFront: z.string(),
+    brandColors: z.object({
+        brandLighter: z.string(),
+        brandLight: z.string(),
+        brand: z.string(),
+        brandDark: z.string(),
+        brandDarker: z.string(),
+        brandSecondary: z.string()
+    }),
+    featureFlags: z.object({
+        chats: z.boolean(),
+        mobileApps: z.boolean(),
+        freemiumRegistrations: z.boolean(),
+        onboarding: z.boolean(),
+        largeEvidenceUploads: z.boolean(),
+        signatures: z.boolean(),
+        notifications: z.boolean(),
+        manageMassiveNotificationReceivers: z.boolean(),
+        manageMassiveSignatureParticipants: z.boolean(),
+        sendNotificationSmsUrl: z.boolean(),
+        sendSignatureSmsUrl: z.boolean(),
+        scascExperiment: z.boolean(),
+        userPermits: z.boolean(),
+        userPermitEvidences: z.boolean(),
+        togglableEmbeddedEvidences: z.boolean(),
+        signatureTypeWithCertificate: z.boolean()
+    }),
+    evidencesAsFirstMenuItem: z.boolean(),
+    menuItemsTranslations: z.array(z.object({
+        language: z.enum(['en_GB', 'es_ES']),
+        evidences: z.string(),
+        chats: z.string(),
+        signatures: z.string(),
+        idVerifications: z.string(),
+        users: z.string(),
+        notifications: z.string()
+    }))
+});
+
+export const zShowFeatureFlagsControllerRunResponse = z.object({
+    chats: z.boolean(),
+    mobileApps: z.boolean(),
+    freemiumRegistrations: z.boolean()
+});
+
 export const zListSignaturePartialCertificatesControllerRunPath = z.object({
     caseFileId: z.string(),
     requestId: z.string(),
@@ -2590,6 +2560,8 @@ export const zListSignatureParticipantsControllerRunResponse = z.object({
         lastName: z.string().optional(),
         email: z.string().optional(),
         createdAt: z.string(),
+        sendWaUrl: z.boolean(),
+        sendSmsUrl: z.boolean(),
         phoneNumber: z.string().optional(),
         phonePrefix: z.string().optional(),
         participantStats: z.object({
@@ -2625,6 +2597,8 @@ export const zCreateSignatureParticipantControllerRunBody = z.object({
     lastName: z.string(),
     email: z.string(),
     linkToAllDocuments: z.boolean().optional(),
+    sendWaUrl: z.boolean().optional(),
+    sendSmsUrl: z.boolean().optional(),
     phoneNumber: z.string().optional(),
     phonePrefix: z.string().optional()
 });
@@ -2729,7 +2703,11 @@ export const zCreateSignatureRequestControllerRunBody = z.object({
     id: z.uuid(),
     name: z.string().max(64),
     language: z.enum(['en_GB', 'es_ES']),
-    signatureType: z.enum(['INTERPOSITION', 'ADVANCED']).optional(),
+    signatureType: z.enum([
+        'INTERPOSITION',
+        'ADVANCED',
+        'WITH_CERTIFICATE'
+    ]).optional(),
     dashboardUrl: z.enum(['NONE', 'ANONYMIZED']).optional(),
     sequence: z.enum(['PARALLEL', 'CONFIGURABLE']).optional(),
     deadline: z.string(),
@@ -2832,7 +2810,11 @@ export const zShowSignatureRequestControllerRunResponse = z.object({
         'COMPLETED_MANUAL'
     ]),
     createdAt: z.string(),
-    signatureType: z.enum(['INTERPOSITION', 'ADVANCED']),
+    signatureType: z.enum([
+        'INTERPOSITION',
+        'ADVANCED',
+        'WITH_CERTIFICATE'
+    ]),
     dashboardUrl: z.enum(['NONE', 'ANONYMIZED']),
     sequence: z.enum(['PARALLEL', 'CONFIGURABLE']),
     activatedAt: z.string().optional(),
@@ -3009,6 +2991,8 @@ export const zListDocumentSignatoriesControllerRunResponse = z.object({
             y: z.number()
         })),
         uniqueValidator: z.boolean(),
+        sendWaUrl: z.boolean(),
+        sendSmsUrl: z.boolean(),
         phoneNumber: z.string().optional(),
         phonePrefix: z.string().optional(),
         participantStats: z.object({
@@ -3525,9 +3509,10 @@ export const zShowProfileControllerRunResponse = z.object({
     lastName: z.string(),
     confirmedAt: z.string().optional(),
     companyId: z.string(),
+    companyName: z.string().optional(),
     companyVerified: z.boolean(),
     companyCorporate: z.boolean(),
-    companyName: z.string().optional(),
+    companyExternalIdentity: z.boolean(),
     defaultCaseFileId: z.string().optional(),
     language: z.string(),
     onboardingShown: z.boolean(),

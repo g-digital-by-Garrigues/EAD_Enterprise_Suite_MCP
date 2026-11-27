@@ -17,7 +17,7 @@ const inputSchema = rawInputSchema;
 
 export const signature_document_list = defineTool({
   name: "signature_document_list",
-  description: "Lists the documents of a signature request with a document-level status and per-document statistics. Requires: signature_request_create → requestId, case_file_create → caseFileId. Items are { id, requestId, groupId, status, title, fileName, fileSize, convertToPdf, participantStats, signatoryStatusStats, signatoryCoordinatesStats } — for example status PARTIALLY_SIGNED with signatoryStatusStats { pending: 0, readyToSign: 1, signed: 1, rejected: 0 } and signatoryCoordinatesStats { defined: 2, missing: 0 } (live-read on INT 2026-09-07). signatoryCoordinatesStats.missing === 0 is the direct check that every required signatory has coordinates before activate_signature_request. Whether this status also reports upload processing for a freshly added document is NOT verified — keep using signature_request_get for that. For the signatories of one document use signature_document_signatory_list.",
+  description: "Lists the documents of a signature request with a document-level status and per-document statistics. Requires: signature_request_create → requestId, case_file_create → caseFileId. Items are { id, requestId, groupId, status, title, fileName, fileSize, convertToPdf, participantStats, signatoryStatusStats, signatoryCoordinatesStats } — for example status PARTIALLY_SIGNED with signatoryStatusStats { pending: 0, readyToSign: 1, signed: 1, rejected: 0 } and signatoryCoordinatesStats { defined: 2, missing: 0 } (live-read on INT 2026-09-07). signatoryCoordinatesStats.missing === 0 is the direct check that every required signatory has coordinates before activate_signature_request. status is also the document's processing state: PENDING (including the conversion to PDF) until processed, then READY_TO_SIGN, or ERROR (the bytes did not match the hash, or the registration failed) — poll it before activate_signature_request; once sent, PARTIALLY_SIGNED, SIGNED, or REJECTED when a signatory declines. For the signatories of one document use signature_document_signatory_list.",
   inputSchema,
   annotations: {
     title: "Signature Document List",
@@ -27,7 +27,7 @@ export const signature_document_list = defineTool({
     openWorldHint: false,
   },
   pollable: false,
-  idempotencyWindowSeconds: 60,
+  idempotencyWindowSeconds: 0,
   async execute(input, ctx) {
     const token = ctx.auth?.token ?? "";
     const sdkClient = createClient(
